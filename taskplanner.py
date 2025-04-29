@@ -35,6 +35,41 @@ class Employee:
         return int(round(np.clip(np.random.normal(loc, scale), 0, 10)))
 
 
+def is_solution_legal(R, L, T, Z, p):
+    num_employees = len(R)
+    num_tasks = len(R[0])
+
+    for emp in range(num_employees):
+        res_1 = 0
+
+        for task in range(num_tasks):
+            
+            res_1 += T[emp][task] * R[emp][task]
+
+            if not (0 <= Z[emp][task] <= 10):
+                return False
+            
+            if not (0 <= R[emp][task] <= 1):
+                return False
+            
+            if not (0 <= p[task] <= 10):
+                return False
+
+        if not (0 <= res_1 <= L):
+            return False
+
+    res_5 = 0    
+
+    for task in range(num_tasks):
+        res_5 = 0
+        for emp in range(num_employees):
+            res_5 += R[emp][task]
+        
+        if not (0 <= res_5 <= 1):
+            return False
+        
+    return True
+
 def generate_tasks(num_tasks):
     task_difficulties = [max(1, int(x)) for x in list(np.random.normal(8, 8, (num_tasks,)))]
     tasks = [Task(difficulty, randint(0, 10), randint(0, 10)) for difficulty in task_difficulties]
