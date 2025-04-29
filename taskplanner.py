@@ -63,30 +63,3 @@ def solve(T, Z, L, num_employees, num_tasks):
             R[j][task] = 1
             time_left -= T[j][task]
     return R
-
-
-if __name__ == '__main__':
-    L = 40
-    num_tasks = 40
-    employees = [
-        Employee([1, 3, 4, 10], 3, [3, 10], [1, 3, 4]),
-        Employee([1], 5, [0, 99], [1]),
-        Employee([x for x in range(10)], 0, [0, 5], []),
-        Employee([], 10, [0, 99], [x for x in range(10)]),
-    ]
-    tasks = generate_tasks(num_tasks)
-    T, Z, p = generate_input_matrices(employees, tasks)
-    R = solve(T, Z, L, len(employees), num_tasks)
-
-    print("Difficulty:")
-    print([task.difficulty for task in tasks])
-    print("T:")
-    print(*T, sep='\n')
-    print("Z:")
-    print(*Z, sep='\n')
-    print("R:")
-    print(*R, sep='\n')
-
-    for j, employee in enumerate(employees):
-        print(f"Employee #{j}:")
-        print(round(sum([T[j][i] * R[j][i] for i in range(num_tasks)]), 2))
