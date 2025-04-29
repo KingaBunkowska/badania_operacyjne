@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import inspect
 from example_function_file import defined_functions
 from genetic_algorithm import Solution, evolutionary_algorithm
 from itertools import product
@@ -40,9 +41,9 @@ def grid_search(T, Z, p, L, grid_params):
     return best_solution, best_params, results
 
 def clean_params(params):
-    params["breed_function"] = params["breed_function"].__name__
-    params["mutate_function"] = params["mutate_function"].__name__
-    params["select_function"] = params["select_function"].__name__
+    keys_with_functions = ["breed_function", "mutate_function", "select_function"]
+    for key in keys_with_functions:
+        params[key] = inspect.getmodule(params[key]).__name__ + ": "+ params[key].__name__
     return params
 
 if __name__ == "__main__":
