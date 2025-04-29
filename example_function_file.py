@@ -7,17 +7,17 @@ def random_delete_breed(population):
     def create_child(parent1, parent2):
         child = Solution(copy(parent1.R))
 
-        for row in range(len(parent1.R)):
-            for col in range(len(parent1.R[0])):
-                if parent1.R[row][col]:
-                    child.R[row][col] = 1 if random.randint(0, 10) >= 9 else 0
+        for employee in range(len(parent1.R)):
+            for task in range(len(parent1.R[0])):
+                if parent1.R[employee][task]:
+                    child.R[employee][task] = 1 if random.randint(0, 10) >= 9 else 0
 
-        for row in range(len(parent2.R)):
-            for col in range(len(parent2.R[0])):
-                if parent2.R[row][col] and child.R[row][col] == 0:
-                    child.R[row][col] = 1 if random.randint(0, 10) > 5 else 0
+        for employee in range(len(parent2.R)):
+            for task in range(len(parent2.R[0])):
+                if parent2.R[employee][task] and child.R[employee][task] == 0:
+                    child.R[employee][task] = 1 if random.randint(0, 10) > 5 else 0
                     if not child.is_legal():
-                        child.R[row][col] = 0
+                        child.R[employee][task] = 0
 
         return child
 
@@ -36,9 +36,9 @@ def random_delete_mutation(children):
     for child in children:
         if random.uniform(0, 1) > 0.99:
 
-            for row in range(len(child.R)):
-                for col in range(len(child.R)):
-                    child.R[row][col] = 0 if random.uniform(0, 1) > 0.9 else child.R[row][col]
+            for employee in range(len(child.R)):
+                for task in range(len(child.R)):
+                    child.R[employee][task] = 0 if random.uniform(0, 1) > 0.9 else child.R[employee][task]
 
     return children
 
