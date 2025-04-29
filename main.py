@@ -80,7 +80,7 @@ def run_evaluate():
 
     axes[1][1].scatter(xs, Fs)
     axes[1][1].set_title('F')
-    fig.show()
+    plt.show()
 
 
 if __name__ == '__main__':
