@@ -3,13 +3,16 @@ from taskplanner import solve
 
 class Solution():
     T = Z = p = L = num_employees = num_tasks = None
-    def __init__(self, R, loss_function=get_evaluator_fn(1, 1, 1), age=0):
+    def __init__(self, R, loss_function=get_evaluator_fn(10, 1, 100), age=0):
         self.age = age
         self.R = R
         self.loss_function = loss_function
 
     @property
     def f(self):
+        return self.loss_function(self.T, self.Z, self.p, self.R)[3]
+    
+    def get_detailed_f(self):
         return self.loss_function(self.T, self.Z, self.p, self.R)
     
     @classmethod
@@ -59,8 +62,8 @@ class Solution():
         return True
     
 
-def find_best_solution(population, data):
-    return max(population, key=lambda obj: obj.f(*data.values()))
+def find_best_solution(population):
+    return min(population, key=lambda obj: obj.f)
 
 def evolutionary_algorithm(
         breed_function, 
@@ -70,13 +73,13 @@ def evolutionary_algorithm(
         population_size: int,
         ):
 
-    population = [Solution(solve(*Solution.get_data_and_config)) for _ in range(population_size)]
-
+    population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(population_size)]
     best_solution = find_best_solution(population)
 
     for generation in range(no_generations):
         children = breed_function(population)
         children = mutate_function(children)
+
         best_child = find_best_solution(children)
         best_solution = best_solution if best_solution.f > best_child.f else best_child
 
