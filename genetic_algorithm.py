@@ -3,17 +3,17 @@ from taskplanner import solve
 
 class Solution():
     T = Z = p = L = num_employees = num_tasks = None
-    def __init__(self, R, loss_function=get_evaluator_fn(10, 1, 100), age=0):
+    def __init__(self, R, loss_function=get_evaluator_fn(10, 1, 100, 10), age=0):
         self.age = age
         self.R = R
         self.loss_function = loss_function
 
     @property
     def f(self):
-        return self.loss_function(self.T, self.Z, self.p, self.R)[3]
+        return self.loss_function(self.T, self.Z, self.p, self.R, self.L)[4]
     
     def get_detailed_f(self):
-        return self.loss_function(self.T, self.Z, self.p, self.R)
+        return self.loss_function(self.T, self.Z, self.p, self.R, self.L)
     
     @classmethod
     def initialize(cls, T, Z, p, L, num_employees, num_tasks):

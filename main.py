@@ -4,14 +4,15 @@ import matplotlib.pyplot as plt
 
 
 def get_evaluator_fn(alpha, beta, gamma, delta):
-    def evaluate(T, Z, p, R):
+    def evaluate(T, Z, p, R, L=40):
         time_spent = np.array(T) * np.array(R)
         time_spent_per_employee = np.sum(time_spent, axis=1)
         f1 = np.max(time_spent_per_employee) - np.min(time_spent_per_employee)
         f2 = np.sum(time_spent * (11 - np.array([p])))
         f3 = 1 / (1 + np.sum(np.sqrt(np.sum(np.array(Z) * np.array(R), axis=1))))
+        f4 = np.sum(np.array([L for _ in range(len(T))]) - np.array(time_spent_per_employee))
 
-        return f1, f2, f3, alpha * f1 + beta * f2 + gamma * f3
+        return f1, f2, f3, f4, alpha * f1 + beta * f2 + gamma * f3 + delta * f4
 
     return evaluate
 
