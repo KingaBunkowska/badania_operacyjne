@@ -81,7 +81,7 @@ def evolutionary_algorithm(
         children = mutate_function(children)
 
         best_child = find_best_solution(children)
-        best_solution = best_solution if best_solution.f > best_child.f else best_child
+        best_solution = best_solution if best_solution.f < best_child.f else best_child
 
         population = select_function(population, children)
 

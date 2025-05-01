@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_evaluator_fn(alpha, beta, gamma):
+def get_evaluator_fn(alpha, beta, gamma, delta):
     def evaluate(T, Z, p, R):
         time_spent = np.array(T) * np.array(R)
         time_spent_per_employee = np.sum(time_spent, axis=1)
@@ -54,7 +54,7 @@ def run_evaluate():
     ]
 
     f1s, f2s, f3s, Fs = [], [], [], []
-    evaluation_fn = get_evaluator_fn(1, 1, 1)
+    evaluation_fn = get_evaluator_fn(10, 1, 100)
 
     num_runs = 50
     for _ in range(num_runs):

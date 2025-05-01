@@ -1,6 +1,7 @@
 from tqdm import tqdm
 import inspect
-from example_function_file import defined_functions
+# from example_function_file import defined_functions
+from lukasz_function import defined_functions
 from genetic_algorithm import Solution, evolutionary_algorithm
 from itertools import product
 from taskplanner import generate_tasks, generate_input_matrices, Employee, Task
@@ -64,3 +65,9 @@ if __name__ == "__main__":
     print("\n".join(str(row) for row in solution.R))
     print(solution.f)
     print(clean_params(params))
+    for e in range(len(solution.R)):
+        count = 0
+        for t in range(len(solution.R[0])):
+            count += solution.R[e][t] * T[e][t]
+
+        print(count)
