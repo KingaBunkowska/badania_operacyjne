@@ -54,19 +54,18 @@ def run_evaluate():
         Employee([], 10, [0, 99], [x for x in range(10)]),
     ]
 
-    f1s, f2s, f3s,f4s, Fs = [], [], [], [], []
-    evaluation_fn = get_evaluator_fn(10, 1, 100, 10)
+    f1s, f2s, f3s, Fs = [], [], [], []
+    evaluation_fn = get_evaluator_fn(1, 1, 1)
 
     num_runs = 50
     for _ in range(num_runs):
         tasks = generate_tasks(num_tasks)
         T, Z, p = generate_input_matrices(employees, tasks)
         R = solve(T, Z, L, len(employees), num_tasks)
-        f1, f2, f3, f4, F = evaluation_fn(T, Z, p, R)
+        f1, f2, f3, F = evaluation_fn(T, Z, p, R)
         f1s.append(f1)
         f2s.append(f2)
         f3s.append(f3)
-        f4s.append(f4)
         Fs.append(F)
 
     fig, axes = plt.subplots(2, 2, figsize=(8, 8))
