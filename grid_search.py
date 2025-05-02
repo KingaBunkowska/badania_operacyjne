@@ -1,17 +1,38 @@
 from tqdm import tqdm
 import inspect
-from example_function_file import defined_functions
-from evolutionary_functions import defined_functions as df
+from example_function_file import defined_functions as example_functions
+from dominance_hierarchy_functions import defined_functions as dominance_hierarchy_functions
+from evolutionary_functions import defined_functions as evolutionary_functions
+from lukasz_function import defined_functions as lukasz_functions
+from maciek_function_file import defined_functions_maciek as maciek_functions
 from genetic_algorithm import Solution, evolutionary_algorithm
 from itertools import product
 from taskplanner import generate_tasks, generate_input_matrices, Employee, Task
 from main import solve
 
 grid_params = {
-    "no_generations": [100, 250, 500],
-    "breed_function": [*defined_functions["breed"], *df["breed"]],
-    "mutate_function": [*defined_functions["mutate"], *df["mutate"]], 
-    "select_function": defined_functions["select"],
+    "no_generations": [100],
+    "breed_function": [
+        *example_functions["breed"],
+        *evolutionary_functions["breed"],
+        *dominance_hierarchy_functions["breed"],
+        *lukasz_functions["breed"],
+        *maciek_functions["breed"],
+    ],
+    "mutate_function": [
+        *example_functions["mutate"],
+        *evolutionary_functions["mutate"],
+        *dominance_hierarchy_functions["mutate"],
+        *lukasz_functions["mutate"],
+        *maciek_functions["mutate"],
+    ],
+    "select_function": [
+        *example_functions["select"],
+        *evolutionary_functions["select"],
+        *dominance_hierarchy_functions["select"],
+        *lukasz_functions["select"],
+        *maciek_functions["select"],
+    ],
 }
 
 def grid_search(T, Z, p, L, grid_params):
