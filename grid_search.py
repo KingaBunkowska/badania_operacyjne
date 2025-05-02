@@ -8,20 +8,12 @@ from itertools import product
 from taskplanner import generate_tasks, generate_input_matrices, Employee, Task
 #
 grid_params = {
-    "breed_function": defined_functions["breed"],
-    "mutate_function": defined_functions["mutate"],
-    "select_function": defined_functions["select"],
+    "breed_function": defined_functions["breed"] + defined_functions_maciek["breed"],
+    "mutate_function": defined_functions["mutate"] + defined_functions_maciek["mutate"],
+    "select_function": defined_functions["select"] + defined_functions_maciek["select"],
     "no_generations": [1, 10, 100],
     "population_size": [2, 20, 100],
 }
-
-# grid_params = {
-#     "breed_function": defined_functions_maciek["breed"],
-#     "mutate_function": defined_functions_maciek["mutate"],
-#     "select_function": defined_functions_maciek["select"],
-#     "no_generations": [1, 10, 100],
-#     "population_size": [2, 20, 100],
-# }
 
 def grid_search(T, Z, p, L, grid_params):
     num_tasks = len(T[0])
