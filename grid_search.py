@@ -29,7 +29,7 @@ def grid_search(T, Z, p, L, grid_params):
 
     results  = {}
     
-    starting_population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(250)]
+    starting_population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(200)]
 
     for combination in tqdm(combinations, desc="Combinations"):
         params = dict(zip(param_names, combination))
