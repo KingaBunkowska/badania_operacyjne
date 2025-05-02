@@ -59,7 +59,7 @@ def shuffle_breed(population):
 
     return children
 
-def repair_mutation(children):
+def repair_mutation(children, max_attempts=1):
     for child in children:
         num_employees = len(child.R)
         num_tasks = len(child.R[0])
@@ -68,16 +68,22 @@ def repair_mutation(children):
             assigned = any(child.R[emp][task] == 1 for emp in range(num_employees))
 
             if not assigned:
-                candidate_emp = random.randint(0, num_employees - 1)
-
                 old_state = deepcopy(child.R)
+                success = False
 
-                for emp in range(num_employees):
-                    child.R[emp][task] = 0
+                for _ in range(max_attempts):
+                    candidate_emp = random.randint(0, num_employees - 1)
 
-                child.R[candidate_emp][task] = 1
+                    for emp in range(num_employees):
+                        child.R[emp][task] = 0
 
-                if not child.is_legal():
+                    child.R[candidate_emp][task] = 1
+
+                    if child.is_legal():
+                        success = True
+                        break
+
+                if not success:
                     child.R = old_state
 
     return children
@@ -87,24 +93,25 @@ def shuffle_mutation(children):
         num_employees = len(child.R)
         num_tasks = len(child.R[0])
 
-        for task in range(num_tasks):
-            current_emp = None
+        task = random.randint(0, num_tasks - 1)
+
+        current_emp = None
+        for emp in range(num_employees):
+            if child.R[emp][task] == 1:
+                current_emp = emp
+                break
+
+        if current_emp is not None:
+            new_emp = (current_emp + 1) % num_employees
+
+            old_state = deepcopy(child.R)
+
             for emp in range(num_employees):
-                if child.R[emp][task] == 1:
-                    current_emp = emp
-                    break
+                child.R[emp][task] = 0
+            child.R[new_emp][task] = 1
 
-            if current_emp is not None:
-                new_emp = (current_emp + 1) % num_employees
-
-                old_state = deepcopy(child.R)
-
-                for emp in range(num_employees):
-                    child.R[emp][task] = 0
-                child.R[new_emp][task] = 1
-
-                if not child.is_legal():
-                    child.R = old_state
+            if not child.is_legal():
+                child.R = old_state
 
     return children
 
