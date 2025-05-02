@@ -1,16 +1,17 @@
 from tqdm import tqdm
 import inspect
 from example_function_file import defined_functions
+from evolutionary_functions import defined_functions as df
 from genetic_algorithm import Solution, evolutionary_algorithm
 from itertools import product
 from taskplanner import generate_tasks, generate_input_matrices, Employee, Task
+from main import solve
 
 grid_params = {
-    "breed_function": defined_functions["breed"],
-    "mutate_function": defined_functions["mutate"], 
+    "no_generations": [100, 250, 500],
+    "breed_function": [*defined_functions["breed"], *df["breed"]],
+    "mutate_function": [*defined_functions["mutate"], *df["mutate"]], 
     "select_function": defined_functions["select"],
-    "no_generations": [1, 10, 100],
-    "population_size": [2, 20, 100],
 }
 
 def grid_search(T, Z, p, L, grid_params):
@@ -27,16 +28,18 @@ def grid_search(T, Z, p, L, grid_params):
     best_params = None
 
     results  = {}
+    
+    starting_population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(250)]
 
     for combination in tqdm(combinations, desc="Combinations"):
         params = dict(zip(param_names, combination))
-        solution = evolutionary_algorithm(**params)
+        solution = evolutionary_algorithm(starting_population, **params)
 
         if best_solution is None or best_solution.f > solution.f:
             best_solution = solution
             best_params = params
 
-        results[params.values()] = solution
+        results[params.values()] = solution.get_detailed_f()
 
     return best_solution, best_params, results
 
@@ -59,7 +62,7 @@ if __name__ == "__main__":
     T, Z, p = generate_input_matrices(employees, tasks)
     L = 40
 
-    solution, params, _ = grid_search(T, Z, p, L, grid_params)
+    solution, params, results = grid_search(T, Z, p, L, grid_params)
 
     print("\n".join(str(row) for row in solution.R))
     print(solution.f)

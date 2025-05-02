@@ -66,14 +66,13 @@ def find_best_solution(population):
     return min(population, key=lambda obj: obj.f)
 
 def evolutionary_algorithm(
+        population,
         breed_function, 
         mutate_function, 
         select_function, 
-        no_generations: int, 
-        population_size: int,
+        no_generations: int,
         ):
 
-    population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(population_size)]
     best_solution = find_best_solution(population)
 
     for generation in range(no_generations):
@@ -81,7 +80,7 @@ def evolutionary_algorithm(
         children = mutate_function(children)
 
         best_child = find_best_solution(children)
-        best_solution = best_solution if best_solution.f > best_child.f else best_child
+        best_solution = best_solution if best_solution.f < best_child.f else best_child
 
         population = select_function(population, children)
 
