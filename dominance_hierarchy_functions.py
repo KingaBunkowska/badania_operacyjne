@@ -112,6 +112,8 @@ def dominant_solution_mutate(population):
             satisfaction = [sol.Z[employee][task] for task in range(len(sol.R[0]))]
             best_task = np.argmax(satisfaction)
             sol.R[employee][best_task] = 1
+            if not sol.is_legal():
+                sol.R[employee][best_task] = 0
         resolve_conflicts(sol)
     return population
 
