@@ -36,7 +36,7 @@ def swap_mutate(children):
         return child
 
     for child in children:
-        if random.uniform(0, 1) > 0.94:
+        if random.uniform(0, 1) > 0.70:
             for i in range(Solution.num_tasks//50):
                 tasks_to_swap = random.sample(range(len(child.R[0])), k=2)
                 child = swap_tasks(child, *tasks_to_swap)
