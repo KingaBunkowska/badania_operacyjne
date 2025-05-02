@@ -52,10 +52,10 @@ def shuffle_breed(population):
 
         child1 = create_child(parent1, parent2)
         child2 = create_child(parent2, parent1)
-        fix_until_legal(child1)
-        fix_until_legal(child2)
-        children.append(create_child(parent1, parent2))
-        children.append(create_child(parent2, parent1))
+        child1 = fix_until_legal(child1)
+        child2 = fix_until_legal(child2)
+        children.append(child1)
+        children.append(child2)
 
     return children
 
