@@ -50,7 +50,8 @@ def breed(population):
 
             child.R[new_employee][task_number_2] = 1
 
-        return legal_child(child)
+        legal_child(child)
+        return child
 
     children = []
 

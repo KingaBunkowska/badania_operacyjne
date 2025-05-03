@@ -1,3 +1,4 @@
+import copy
 from random import random, choice, shuffle
 
 import numpy as np
@@ -8,8 +9,8 @@ from genetic_algorithm import Solution
 def crossover_swap_same_employees(parent1, parent2):
     employee_split = list(range(len(parent1.R)))
     shuffle(employee_split)
-    child1 = Solution(parent1.R.copy())
-    child2 = Solution(parent2.R.copy())
+    child1 = Solution(copy.deepcopy(parent1.R))
+    child2 = Solution(copy.deepcopy(parent2.R))
     for e in employee_split[:len(employee_split)//2]:
         child1.R[e], child2.R[e] = child2.R[e], child1.R[e]
 
@@ -26,18 +27,18 @@ def crossover_happy_vs_productive(parent1, parent2):
     p1 = sum([parent1.T[productive][task] * parent1.R[productive][task] for task in range(len(parent1.R[productive]))])
     p2 = sum([parent2.T[productive][task] * parent2.R[productive][task] for task in range(len(parent2.R[productive]))])
 
-    child1 = Solution(parent1.R.copy())
-    child2 = Solution(parent2.R.copy())
+    child1 = Solution(copy.deepcopy(parent1.R))
+    child2 = Solution(copy.deepcopy(parent2.R))
 
     if h1 > h2:
-        child2.R[happy] = child1.R[happy]
+        child2.R[happy] = copy.deepcopy(child1.R[happy])
     else:
-        child1.R[happy] = child2.R[happy]
+        child1.R[happy] = copy.deepcopy(child2.R[happy])
 
     if p1 > p2:
-        child2.R[productive] = child1.R[productive]
+        child2.R[productive] = copy.deepcopy(child1.R[productive])
     else:
-        child1.R[productive] = child2.R[productive]
+        child1.R[productive] = copy.deepcopy(child2.R[productive])
 
     return resolve_conflicts(child1), resolve_conflicts(child2)
 
