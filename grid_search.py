@@ -1,3 +1,5 @@
+import copy
+
 from tqdm import tqdm
 import inspect
 from example_function_file import defined_functions as example_functions
@@ -44,7 +46,6 @@ def grid_search(T, Z, p, L, grid_params):
     param_names = list(grid_params.keys())
     param_values = list(grid_params.values())
     combinations = list(product(*param_values))
-
     best_solution = None
     best_params = None
 
@@ -57,8 +58,13 @@ def grid_search(T, Z, p, L, grid_params):
         solution = evolutionary_algorithm(starting_population, **params)
 
         if best_solution is None or best_solution.f > solution.f:
-            best_solution = solution
-            best_params = params
+            best_solution = copy.deepcopy(solution)
+            best_params = copy.deepcopy(params)
+            print()
+            print(best_solution.f)
+            print(clean_params(best_params))
+            print()
+            print()
 
         results[params.values()] = solution.get_detailed_f()
 

@@ -1,11 +1,12 @@
 import random
-from copy import copy
+import copy
 from genetic_algorithm import Solution
 
 
 def random_delete_breed(population):
     def create_child(parent1, parent2):
-        child = Solution(copy(parent1.R))
+        # child = Solution(copy(parent1.R))
+        child = Solution(copy.deepcopy(parent1.R))
 
         for employee in range(len(parent1.R)):
             for task in range(len(parent1.R[0])):
