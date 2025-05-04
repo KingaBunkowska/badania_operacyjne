@@ -60,7 +60,12 @@ def shuffle_breed(population):
     return children
 
 def repair_mutation(children, max_attempts=1):
+
     for child in children:
+        # if not child.is_legal():
+        #     raise Exception("mutation received illegal child")
+
+
         num_employees = len(child.R)
         num_tasks = len(child.R[0])
 
@@ -85,6 +90,9 @@ def repair_mutation(children, max_attempts=1):
 
                 if not success:
                     child.R = old_state
+        #
+        # if not child.is_legal():
+        #     raise Exception("mutation made illegal child")
 
     return children
 

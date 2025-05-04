@@ -1,20 +1,11 @@
+from tqdm import tqdm
+
+from dominance_hierarchy_functions import dominant_solution_breed_swap_employees
+from example_function_file import select_children
+from genetic_algorithm import evolutionary_algorithm, Solution, get_evaluator_fn
+from lukasz_function import mutation
 from taskplanner import Employee, generate_tasks, generate_input_matrices, solve
-import numpy as np
 import matplotlib.pyplot as plt
-
-
-def get_evaluator_fn(alpha, beta, gamma, delta):
-    def evaluate(T, Z, p, R, L=40):
-        time_spent = np.array(T) * np.array(R)
-        time_spent_per_employee = np.sum(time_spent, axis=1)
-        f1 = np.max(time_spent_per_employee) - np.min(time_spent_per_employee)
-        f2 = np.sum(time_spent * (11 - np.array([p])))
-        f3 = 1 / (1 + np.sum(np.sqrt(np.sum(np.array(Z) * np.array(R), axis=1))))
-        f4 = np.sum(np.array([L for _ in range(len(T))]) - np.array(time_spent_per_employee))
-
-        return f1, f2, f3, f4, alpha * f1 + beta * f2 + gamma * f3 + delta * f4
-
-    return evaluate
 
 
 def run_once():
@@ -54,33 +45,63 @@ def run_evaluate():
         Employee([], 10, [0, 99], [x for x in range(10)]),
     ]
 
-    f1s, f2s, f3s, Fs = [], [], [], []
-    evaluation_fn = get_evaluator_fn(1, 1, 1)
+    evaluation_fn = get_evaluator_fn(10, 1, 100, 10)
 
-    num_runs = 50
-    for _ in range(num_runs):
+    random_results = [[] for _ in range(5)]
+    best_effort_results = [[] for _ in range(5)]
+
+    N = 100
+
+    def run(T, Z, p):
+        R = solve(T, Z, L, len(employees), num_tasks)
+        for i, x in enumerate(evaluation_fn(T, Z, p, R)):
+            random_results[i].append(x)
+
+        Solution.initialize(T, Z, p, L, 4, num_tasks)
+        starting_population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(200)]
+        sol = evolutionary_algorithm(
+            starting_population,
+            dominant_solution_breed_swap_employees,
+            mutation,
+            select_children,
+            100
+        )
+        for i, x in enumerate(evaluation_fn(T, Z, p, sol.R)):
+            best_effort_results[i].append(x)
+
+    for _ in tqdm(range(N)):
         tasks = generate_tasks(num_tasks)
         T, Z, p = generate_input_matrices(employees, tasks)
-        R = solve(T, Z, L, len(employees), num_tasks)
-        f1, f2, f3, F = evaluation_fn(T, Z, p, R)
-        f1s.append(f1)
-        f2s.append(f2)
-        f3s.append(f3)
-        Fs.append(F)
+        run(T, Z, p)
 
-    fig, axes = plt.subplots(2, 2, figsize=(8, 8))
-    xs = [x for x in range(num_runs)]
-    axes[0][0].scatter(xs, f1s)
+    fig, axes = plt.subplots(2, 3, figsize=(24, 16))
+    xs = [x for x in range(N)]
+    axes[0][0].scatter(xs, random_results[0], label='random')
+    axes[0][0].scatter(xs, best_effort_results[0], label='evolved')
     axes[0][0].set_title('f1')
+    axes[0][0].legend()
 
-    axes[0][1].scatter(xs, f2s)
+    axes[0][1].scatter(xs, random_results[1], label='random')
+    axes[0][1].scatter(xs, best_effort_results[1], label='evolved')
     axes[0][1].set_title('f2')
+    axes[0][1].legend()
 
-    axes[1][0].scatter(xs, f3s)
-    axes[1][0].set_title('f3')
+    axes[0][2].scatter(xs, random_results[2], label='random')
+    axes[0][2].scatter(xs, best_effort_results[2], label='evolved')
+    axes[0][2].set_title('f3')
+    axes[0][2].legend()
 
-    axes[1][1].scatter(xs, Fs)
+    axes[1][0].scatter(xs, random_results[3], label='random')
+    axes[1][0].scatter(xs, best_effort_results[3], label='evolved')
+    axes[1][0].set_title('f4')
+    axes[1][0].legend()
+
+    axes[1][1].scatter(xs, random_results[4], label='random')
+    axes[1][1].scatter(xs, best_effort_results[4], label='evolved')
     axes[1][1].set_title('F')
+    axes[1][1].legend()
+
+    axes[1][2].axis('off')
     plt.show()
 
 
