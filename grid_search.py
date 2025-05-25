@@ -1,4 +1,5 @@
 import copy
+import multiprocessing
 
 from tqdm import tqdm
 import inspect
@@ -11,70 +12,81 @@ from genetic_algorithm import Solution, evolutionary_algorithm
 from itertools import product
 from taskplanner import generate_tasks, generate_input_matrices, Employee, Task
 from main import solve
+from uuid import uuid1
+
+def functions_to_names(functions):
+    return [f"{inspect.getmodule(f).__name__}.{f.__name__}" for f in functions]
 
 grid_params = {
-    "no_generations": [100],
-    "breed_function": [
+    "no_generations": [50, 100, 200],
+    "breed_function": functions_to_names([
         *example_functions["breed"],
         *evolutionary_functions["breed"],
         *dominance_hierarchy_functions["breed"],
         *lukasz_functions["breed"],
         *maciek_functions["breed"],
-    ],
-    "mutate_function": [
+    ]),
+    "mutate_function": functions_to_names([
         *example_functions["mutate"],
         *evolutionary_functions["mutate"],
         *dominance_hierarchy_functions["mutate"],
         *lukasz_functions["mutate"],
         *maciek_functions["mutate"],
-    ],
-    "select_function": [
+    ]),
+    "select_function": functions_to_names([
         *example_functions["select"],
         *evolutionary_functions["select"],
         *dominance_hierarchy_functions["select"],
         *lukasz_functions["select"],
         *maciek_functions["select"],
-    ],
+    ]),
 }
 
-def grid_search(T, Z, p, L, grid_params):
-    num_tasks = len(T[0])
-    num_employees = len(T)
+def run_grid_search(params):
+    (process_name, T, Z, p, L, param_names, param_combinations) = params
 
-    Solution.initialize(T, Z, p, L, num_employees, num_tasks)
+    with open(f"{process_name}_{uuid1()}.txt", "w") as fin:
+        num_tasks = len(T[0])
+        num_employees = len(T)
 
-    param_names = list(grid_params.keys())
-    param_values = list(grid_params.values())
-    combinations = list(product(*param_values))
-    best_solution = None
-    best_params = None
+        Solution.initialize(T, Z, p, L, num_employees, num_tasks)
 
-    results  = {}
-    
-    starting_population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(200)]
+        best_solution = None
+        best_params = None
 
-    for combination in tqdm(combinations, desc="Combinations"):
-        params = dict(zip(param_names, combination))
-        solution = evolutionary_algorithm(starting_population, **params)
+        results  = {}
 
-        if best_solution is None or best_solution.f > solution.f:
-            best_solution = copy.deepcopy(solution)
-            best_params = copy.deepcopy(params)
-            print()
-            print(best_solution.f)
-            print(clean_params(best_params))
-            print()
-            print()
+        starting_population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(200)]
 
-        results[params.values()] = solution.get_detailed_f()
+        for combination in tqdm(param_combinations, desc=process_name):
+            params = dict(zip(param_names, combination))
+            solution = evolutionary_algorithm(starting_population, **params)
+
+            fin.write(f"{solution.get_detailed_f()} ; {params}\n")
+
+            if best_solution is None or best_solution.f > solution.f:
+                best_solution = copy.deepcopy(solution)
+                best_params = copy.deepcopy(params)
+                print()
+                print(best_solution.f)
+                print(best_params)
+                print()
+                print()
+
+            results[params.values()] = solution.get_detailed_f()
+
+        fin.write(f"[[ BEST ]] {best_solution.get_detailed_f()} ; {best_params}\n")
 
     return best_solution, best_params, results
 
-def clean_params(params):
-    keys_with_functions = ["breed_function", "mutate_function", "select_function"]
-    for key in keys_with_functions:
-        params[key] = inspect.getmodule(params[key]).__name__ + ": "+ params[key].__name__
-    return params
+def equal_split(data, n_chunks):
+    chunk_size = len(data) // n_chunks
+
+    start = 0
+    for _ in range(n_chunks-1):
+        yield data[start:start+chunk_size]
+        start += chunk_size
+    yield data[chunk_size:]
 
 if __name__ == "__main__":
     employees = [
@@ -89,8 +101,11 @@ if __name__ == "__main__":
     T, Z, p = generate_input_matrices(employees, tasks)
     L = 40
 
-    solution, params, results = grid_search(T, Z, p, L, grid_params)
+    num_parallel = 8
 
-    print("\n".join(str(row) for row in solution.R))
-    print(solution.f)
-    print(clean_params(params))
+    combinations_chunks = equal_split(list(product(*grid_params.values())), num_parallel)
+    pool = multiprocessing.Pool(num_parallel)
+
+    param_names = list(grid_params.keys())
+
+    pool.map(run_grid_search, ((f"process_{i+1}", T, Z, p, L, param_names, chunk) for (i, chunk) in enumerate(combinations_chunks)))

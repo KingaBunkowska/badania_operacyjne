@@ -1,3 +1,5 @@
+import importlib
+
 import numpy as np
 
 
@@ -80,21 +82,25 @@ def find_best_solution(population):
 
 def evolutionary_algorithm(
         population,
-        breed_function, 
-        mutate_function, 
-        select_function, 
+        breed_function,
+        mutate_function,
+        select_function,
         no_generations: int,
         ):
+
+    breed_function_impl = getattr(importlib.import_module(breed_function.split(".")[0]), breed_function.split(".")[1])
+    mutate_function_impl = getattr(importlib.import_module(mutate_function.split(".")[0]), mutate_function.split(".")[1])
+    select_function_impl = getattr(importlib.import_module(select_function.split(".")[0]), select_function.split(".")[1])
 
     best_solution = find_best_solution(population)
 
     for generation in range(no_generations):
-        children = breed_function(population)
-        children = mutate_function(children)
+        children = breed_function_impl(population)
+        children = mutate_function_impl(children)
 
         best_child = find_best_solution(children)
         best_solution = best_solution if best_solution.f < best_child.f else best_child
 
-        population = select_function(population, children)
+        population = select_function_impl(population, children)
 
     return best_solution
