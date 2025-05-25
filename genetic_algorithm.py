@@ -18,10 +18,12 @@ def get_evaluator_fn(alpha, beta, gamma, delta):
 
 class Solution():
     T = Z = p = L = num_employees = num_tasks = None
-    def __init__(self, R, loss_function=get_evaluator_fn(30, 1, 3000, 20), age=0):
+    alpha = beta = gamma = delta = None
+    loss_function = None
+    def __init__(self, R, age=0):
         self.age = age
         self.R = R
-        self.loss_function = loss_function
+        self.loss_function = self.__class__.loss_function
 
     @property
     def f(self):
@@ -31,13 +33,32 @@ class Solution():
         return self.loss_function(self.T, self.Z, self.p, self.R, self.L)
     
     @classmethod
-    def initialize(cls, T, Z, p, L, num_employees, num_tasks):
+    def initialize(
+        cls, 
+        T, 
+        Z, 
+        p, 
+        L, 
+        num_employees, 
+        num_tasks, 
+        alpha=10, 
+        beta=1, 
+        gamma=100,
+        delta=10,
+    ):
         cls.T = T
         cls.Z = Z
         cls.p = p
         cls.L = L
         cls.num_employees = num_employees
         cls.num_tasks = num_tasks
+
+        cls.alpha = 10
+        cls.beta = 1
+        cls.gamma = 100
+        cls.delta = 10
+
+        cls.loss_function = get_evaluator_fn(alpha, beta, gamma, delta)
 
     @classmethod
     def get_data_and_config(cls):
