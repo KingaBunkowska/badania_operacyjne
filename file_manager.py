@@ -70,11 +70,14 @@ class FileManager():
         for required_field in required_fields:
             if required_field not in data.keys():
                 raise ValueError(
-                    f"Cannot find required field {required_field} \
-                    in configuration file {filename}"
+                    f"Cannot find required field {required_field}"
+                    "in configuration file {filename}"
                     )
 
-        # check L
+        if not isinstance(data["L"], int) or data["L"] <= 0:
+            raise ValueError(
+                "L must be integer > 0"
+            )
 
         # data load mode
         self.load_data()
@@ -86,30 +89,32 @@ class FileManager():
 
         if data["starting_population_mode"] not in ("auto", "from_file"):
             raise ValueError(
-                f"Unexpected value of 'starting_population_mode': \
-                {data["starting_population_mode"]}. Expected: 'auto' or 'from_file'"
+                "Unexpected value of 'starting_population_mode':"
+                f"{data["starting_population_mode"]}. Expected: 'auto' or 'from_file'"
                 )
 
         if data["starting_population_mode"] == "auto":
             if "starting_population_size" not in data.keys():
                 raise ValueError("Specify population size when using mode 'auto'")
-            if not isinstance(data["starting_population_size"], int) \
-                or data["starting_population_size"] < 2:
+            if (
+                not isinstance(data["starting_population_size"], int) 
+                or data["starting_population_size"] < 2
+            ):
                 raise ValueError("'starting_population_size' must be an integer ≥ 2.")
             
             self.starting_population = [
                 Solution(solve(*Solution.get_data_and_config()))
                 for _ in range(data["starting_population_size"])
             ]
-            print(f"Number of individuals in the initial population: \
-                  {len(self.starting_population)}.")
+            print("Number of individuals in the initial population: "
+                  f"{len(self.starting_population)}.")
 
         else: # starting_population_mode = "from_file":
             file_path = data["starting_population_file"]
             if not isinstance(file_path, str) or file_path.endswith(".pkl"):
                 raise ValueError(
-                    f"Invalid 'starting_population_file': \
-                    expected a string ending with '.pkl', got {repr(file_path)}"
+                    "Invalid 'starting_population_file': "
+                    f"expected a string ending with '.pkl', got {repr(file_path)}"
                 )
             
             with open(file_path, "rb") as f:
@@ -121,8 +126,8 @@ class FileManager():
             
             if verbose:
                 print(
-                    f"Number of individuals in the starting population: \
-                    {len(self.starting_population)}."
+                    "Number of individuals in the starting population: "
+                    f"{len(self.starting_population)}."
                 )
 
         function_dict = get_function_dict()
@@ -133,18 +138,18 @@ class FileManager():
 
         if self.breed_function is None:
             raise ValueError(
-                f"Cannot find function {data["breed_function"]}. \
-                Try to one of: {', '.join(function_dict["breed_function"].keys())}"
+                f"Cannot find function {data["breed_function"]}. "
+                f"Try to one of: {', '.join(function_dict["breed_function"].keys())}"
             )
         if self.mutate_function is None:
             raise ValueError(
-                f"Cannot find function {data["mutate_function"]}. \
-                Try to one of: {', '.join(function_dict["mutate_function"].keys())}"
+                f"Cannot find function {data["mutate_function"]}. "
+                f"Try to one of: {', '.join(function_dict["mutate_function"].keys())}"
             )
         if self.select_function is None:
             raise ValueError(
-                f"Cannot find function {data["select_function"]}. \
-                Try to one of: {', '.join(function_dict["select_function"].keys())}"
+                f"Cannot find function {data["select_function"]}. "
+                f"Try to one of: {', '.join(function_dict["select_function"].keys())}"
             )
 
         self.data = data
@@ -158,110 +163,89 @@ class FileManager():
             self.data["no_generations"],
         )
 
-
     def load_data(self):
         self._load_tasks_employees()
 
     def _load_tasks_employees(self):
-        tasks = load_tasks_from_json(self.experiment_catalog / "tasks.json")
-        employees = load_employees_from_json(self.experiment_catalog / "employees.json")
+        tasks = self.load_tasks_from_json("tasks.json")
+        employees = self.load_employees_from_json("employees.json")
 
         self.T, self.Z, self.p = generate_input_matrices(employees, tasks)
 
-def save_tasks_to_json(tasks, filepath):
-    data = [
-        {
-            "difficulty": task.difficulty,
-            "category": task.category,
-            "priority": task.priority
-        }
-        for task in tasks
-    ]
-    with open(filepath, 'w') as f:
-        json.dump(data, f, indent=2)
+    def _validate_task(self, task_dict):
+        if not (0 <= int(task_dict["priority"]) <= 10):
+            raise ValueError(
+                "Task priority must be an integer between 0 and 10; "
+                f"got {task_dict['priority']}.")
 
-def validate_task(task_dict):
-    if not (0 <= int(task_dict["priority"]) <= 10):
-        raise ValueError(f"Task priority must be an integer between 0 and 10; \
-                         got {task_dict['priority']}.")
+    def load_tasks_from_json(self, filename="tasks.json"):
+        with open(self.experiment_catalog / filename, 'r') as f:
+            data = json.load(f)
 
-def load_tasks_from_json(filepath):
-    with open(filepath, 'r') as f:
-        data = json.load(f)
+        tasks = []
+        for i, item in enumerate(data):
+            try:
+                self._validate_task(item)
+                difficulty = int(item["difficulty"])
+                category = int(item["category"])
+                priority = int(item["priority"])
+                tasks.append(Task(difficulty, category, priority))
+            except (KeyError, ValueError, TypeError) as e:
+                raise ValueError(f"Invalid task format at index {i}: {e}")
+        return tasks
 
-    tasks = []
-    for i, item in enumerate(data):
-        try:
-            validate_task(item)
-            difficulty = int(item["difficulty"])
-            category = int(item["category"])
-            priority = int(item["priority"])
-            tasks.append(Task(difficulty, category, priority))
-        except (KeyError, ValueError, TypeError) as e:
-            raise ValueError(f"Invalid task format at index {i}: {e}")
-    return tasks
+    def load_employees_from_json(self, filename="employees.json"):
+        with open(self.experiment_catalog / filename, 'r') as f:
+            raw_data = json.load(f)
 
-def save_employees_to_json(employees, filepath):
-    data = [
-        {
-            "likes_categories": e.likes_categories,
-            "experience": e.experience,
-            "comfortable_difficulty": e.comfortable_difficulty,
-            "is_good_at_categories": e.is_good_at_categories,
-        }
-        for e in employees
-    ]
-    with open(filepath, 'w') as f:
-        json.dump(data, f, indent=2)
+        employees = []
+        for i, entry in enumerate(raw_data):
+            try:
+                emp = Employee(
+                    likes_categories=entry["likes_categories"],
+                    experience=entry["experience"],
+                    comfortable_difficulty=entry["comfortable_difficulty"],
+                    is_good_at_categories=entry["is_good_at_categories"]
+                )
+                employees.append(emp)
+            except ValueError as e:
+                raise ValueError(f"Invalid data for employee #{i}: {e}")
 
-def load_employees_from_json(filepath):
-    with open(filepath, 'r') as f:
-        raw_data = json.load(f)
+        return employees
 
-    employees = []
-    for i, entry in enumerate(raw_data):
-        try:
-            emp = Employee(
-                likes_categories=entry["likes_categories"],
-                experience=entry["experience"],
-                comfortable_difficulty=entry["comfortable_difficulty"],
-                is_good_at_categories=entry["is_good_at_categories"]
-            )
-            employees.append(emp)
-        except ValueError as e:
-            raise ValueError(f"Invalid data for employee #{i}: {e}")
+    def save_tasks_to_json(self, tasks, filename="tasks.json"):
+        data = [
+            {
+                "difficulty": task.difficulty,
+                "category": task.category,
+                "priority": task.priority
+            }
+            for task in tasks
+        ]
+        with open(self.experiment_catalog / filename, 'w') as f:
+            json.dump(data, f, indent=2)
 
-    return employees
+    def save_employees_to_json(self, employees, filename):
+        data = [
+            {
+                "likes_categories": e.likes_categories,
+                "experience": e.experience,
+                "comfortable_difficulty": e.comfortable_difficulty,
+                "is_good_at_categories": e.is_good_at_categories,
+            }
+            for e in employees
+        ]
+        with open(self.experiment_catalog / filename, 'w') as f:
+            json.dump(data, f, indent=2)
+
+
 
 if __name__ == "__main__":
-    # config_path = Path(__file__).parent / "config.json"
-    # print(load_config(config_path))
 
-    # tasks = generate_tasks(10)
-    # print(tasks)
-    # save_tasks_to_json(tasks, "./data_files/tasks.json")
-    # tasks_loaded = load_tasks_from_json("./data_files/tasks.json")
-    # print(tasks_loaded)
-
-    # employees = [
-    #     Employee([1, 3, 4, 10], 3, [3, 10], [1, 3, 4]),
-    #     Employee([1], 5, [0, 99], [1]),
-    #     Employee([x for x in range(10)], 0, [0, 5], []),
-    #     Employee([], 10, [0, 99], [x for x in range(10)]),
-    # ]
-    # print(employees)
-
-    # save_employees_to_json(employees, "./data_files/employees.json")
-    # emp = load_employees_from_json("./data_files/employees.json")
-    # print(emp)
+    # test
+    from genetic_algorithm import evolutionary_algorithm
 
     manager = FileManager()
     manager.load_config()
-    # manager.load_data()
-
-    from genetic_algorithm import evolutionary_algorithm
-
-    # print(manager.starting_population[0].R)
-    # print(manager.get_evolutionary_algorithm_arguments()[0][0].R)
 
     print(evolutionary_algorithm(*manager.get_evolutionary_algorithm_arguments()).R)
