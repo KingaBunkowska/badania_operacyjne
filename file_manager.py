@@ -1,3 +1,4 @@
+import inspect
 import json
 import pickle
 from pathlib import Path
@@ -14,8 +15,8 @@ from main import solve
 from taskplanner import Employee, Task, generate_input_matrices
 
 
-def get_function_dict():
-    category_function_dict = {
+def get_function_names_dict():
+    category_function_names_dict = {
         "breed_function": [
             *example_functions["breed"],
             *evolutionary_functions["breed"],
@@ -39,8 +40,11 @@ def get_function_dict():
         ],
     }
     return {
-        category: {func.__name__: func for func in funcs}
-        for category, funcs in category_function_dict.items()
+        category: {
+            func.__name__: f"{inspect.getmodule(func).__name__}.{func.__name__}"
+            for func in funcs
+        }
+        for category, funcs in category_function_names_dict.items()
     }
 
 class FileManager():
@@ -141,38 +145,38 @@ class FileManager():
                     f"{len(self.starting_population)}."
                 )
 
-        function_dict = get_function_dict()
+        function_names_dict = get_function_names_dict()
 
-        self.breed_function = function_dict["breed_function"].get(data["breed_function"])
-        self.mutate_function = function_dict["mutate_function"].get(data["mutate_function"])
-        self.select_function = function_dict["select_function"].get(data["select_function"])
+        self.breed_function_fqn = function_names_dict["breed_function"].get(data["breed_function"])
+        self.mutate_function_fqn = function_names_dict["mutate_function"].get(data["mutate_function"])
+        self.select_function_fqn = function_names_dict["select_function"].get(data["select_function"])
 
-        if self.breed_function is None:
+        if self.breed_function_fqn is None:
             raise ValueError(
                 f"Cannot find function {data["breed_function"]}. "
-                f"Try to one of: {', '.join(function_dict["breed_function"].keys())}"
+                f"Try to one of: {', '.join(function_names_dict["breed_function"].keys())}"
             )
-        if self.mutate_function is None:
+        if self.mutate_function_fqn is None:
             raise ValueError(
                 f"Cannot find function {data["mutate_function"]}. "
-                f"Try to one of: {', '.join(function_dict["mutate_function"].keys())}"
+                f"Try to one of: {', '.join(function_names_dict["mutate_function"].keys())}"
             )
-        if self.select_function is None:
+        if self.select_function_fqn is None:
             raise ValueError(
                 f"Cannot find function {data["select_function"]}. "
-                f"Try to one of: {', '.join(function_dict["select_function"].keys())}"
+                f"Try to one of: {', '.join(function_names_dict["select_function"].keys())}"
             )
 
         self.data = data
 
     def get_evolutionary_algorithm_arguments(self):
-        return (
-            self.starting_population,
-            self.breed_function,
-            self.mutate_function,
-            self.select_function,
-            self.data["no_generations"],
-        )
+        return {
+            "population": self.starting_population,
+            "breed_function": self.breed_function_fqn,
+            "mutate_function": self.mutate_function_fqn,
+            "select_function": self.select_function_fqn,
+            "no_generations": self.data["no_generations"],
+        }
 
     def load_data(self):
         self._load_tasks_employees()
@@ -259,4 +263,4 @@ if __name__ == "__main__":
     manager = FileManager()
     manager.load_config()
 
-    print(evolutionary_algorithm(*manager.get_evolutionary_algorithm_arguments()).R)
+    print(evolutionary_algorithm(**manager.get_evolutionary_algorithm_arguments()).R)

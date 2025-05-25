@@ -2,20 +2,17 @@ import copy
 import multiprocessing
 
 from tqdm import tqdm
-import inspect
 from example_function_file import defined_functions as example_functions
 from dominance_hierarchy_functions import defined_functions as dominance_hierarchy_functions
 from evolutionary_functions import defined_functions as evolutionary_functions
 from lukasz_function import defined_functions as lukasz_functions
 from maciek_function_file import defined_functions_maciek as maciek_functions
-from genetic_algorithm import Solution, evolutionary_algorithm
+from genetic_algorithm import Solution, evolutionary_algorithm, functions_to_names
 from itertools import product
 from taskplanner import generate_tasks, generate_input_matrices, Employee, Task
 from main import solve
 from uuid import uuid1
 
-def functions_to_names(functions):
-    return [f"{inspect.getmodule(f).__name__}.{f.__name__}" for f in functions]
 
 grid_params = {
     "no_generations": [50, 100, 200],

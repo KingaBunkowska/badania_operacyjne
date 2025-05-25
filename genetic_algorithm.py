@@ -1,5 +1,5 @@
 import importlib
-
+import inspect
 import numpy as np
 
 
@@ -100,6 +100,9 @@ class Solution():
 
 def find_best_solution(population):
     return min(population, key=lambda obj: obj.f)
+
+def functions_to_names(functions):
+    return [f"{inspect.getmodule(f).__name__}.{f.__name__}" for f in functions]
 
 def import_function_by_fqn(fqn):
     module, name = fqn.split(".")
