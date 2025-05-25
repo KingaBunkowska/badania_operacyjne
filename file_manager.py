@@ -2,6 +2,7 @@ import inspect
 import json
 import pickle
 from pathlib import Path
+import os
 
 from dominance_hierarchy_functions import (
     defined_functions as dominance_hierarchy_functions,
@@ -51,6 +52,7 @@ class FileManager():
 
     def __init__(self, catalog='data_files'):
         self.experiment_catalog = Path(__file__).parent / catalog
+        os.makedirs(os.path.dirname(self.experiment_catalog / catalog), exist_ok=True)
         self.data = None
         self.starting_population = None
 
@@ -69,13 +71,15 @@ class FileManager():
             "gamma", 
             "delta",
             "L",
+            "data_load_mode" # "matrices", "generated"
         ]
 
+        self.data = data
         for required_field in required_fields:
             if required_field not in data.keys():
                 raise ValueError(
                     f"Cannot find required field {required_field}"
-                    "in configuration file {filename}"
+                    f"in configuration file {filename}"
                     )
 
         if not isinstance(data["L"], int) or data["L"] <= 0:
@@ -83,7 +87,12 @@ class FileManager():
                 "L must be integer > 0"
             )
 
-        # data load mode
+        if data["data_load_mode"] not in ("matrices", "generated"):
+            raise ValueError(
+                "Unexpected value of 'data_load_mode':"
+                f"{data["data_load_mode"]}. Expected: 'matrices' or 'generated'"
+                )
+
         self.load_data()
 
         self.L = data["L"]
@@ -167,8 +176,6 @@ class FileManager():
                 f"Try to one of: {', '.join(function_names_dict["select_function"].keys())}"
             )
 
-        self.data = data
-
     def get_evolutionary_algorithm_arguments(self):
         return {
             "population": self.starting_population,
@@ -179,13 +186,21 @@ class FileManager():
         }
 
     def load_data(self):
-        self._load_tasks_employees()
+        if self.data["data_load_mode"] == "generated":
+            self._load_tasks_employees()
+        else: # "data_load_mode" = "matrices"
+            self._load_T_Z_p()
 
     def _load_tasks_employees(self):
         tasks = self.load_tasks_from_json("tasks.json")
         employees = self.load_employees_from_json("employees.json")
 
         self.T, self.Z, self.p = generate_input_matrices(employees, tasks)
+
+    def _load_T_Z_p(self):
+        self.T = self.load_matrix_from_json("T.json")
+        self.Z = self.load_matrix_from_json("Z.json")
+        self.p = self.load_matrix_from_json("p.json")
 
     def _validate_task(self, task_dict):
         if not (0 <= int(task_dict["priority"]) <= 10):
@@ -253,6 +268,15 @@ class FileManager():
         with open(self.experiment_catalog / filename, 'w') as f:
             json.dump(data, f, indent=2)
 
+    def load_matrix_from_json(self, filename):
+        with open(self.experiment_catalog / filename, "r") as f:
+            matrix = json.load(f)
+
+        return matrix
+
+    def save_matrix_to_json(self, filename, matrix):
+        with open(self.experiment_catalog / filename, "w") as f:
+            json.dump(matrix, f)
 
 
 if __name__ == "__main__":
@@ -263,4 +287,11 @@ if __name__ == "__main__":
     manager = FileManager()
     manager.load_config()
 
+    # manager.save_matrix_to_json("T.json", manager.T)
+    # manager.save_matrix_to_json("Z.json", manager.Z)
+    # manager.save_matrix_to_json("p.json", manager.p)
     print(evolutionary_algorithm(**manager.get_evolutionary_algorithm_arguments()).R)
+    print(manager.T)
+
+    manager = FileManager("new_data")
+    manager.save_matrix_to_json("t.json", [1, 2])
