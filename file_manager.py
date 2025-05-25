@@ -57,7 +57,37 @@ class FileManager():
         self.starting_population = None
 
     def load_config(self, filename="config.json", verbose=True):
+        """
+        Loads the configuration file (default: `"config.json"`) from the experiment directory
+        provided during Manager initialization.
 
+        The configuration file must be a JSON file containing the following required fields:
+
+        - `no_generations`: number of generations to run the algorithm
+        - `starting_population_mode`: strategy for initializing the population; either `"auto"` or `"from_file"`
+            * `"auto"` - requires an additional field `starting_population_size` with an integer specifying how many individuals should be generated
+            * `"from_file"` - requires an additional field `starting_population_file` with the name of a JSON file (in the experiment directory) containing a list of `R` matrices to be used as the initial population
+        - `breed_function`: name of the breeding function to use
+        - `mutate_function`: name of the mutation function to use
+        - `select_function`: name of the selection function to use
+        - `alpha`: weight of the `f1` component of the loss function (even distribution of time among employees)
+        - `beta`: weight of the `f2` component of the loss function (spending time on higher-priority tasks)
+        - `gamma`: weight of the `f3` component of the loss function (employee satisfaction)
+        - `delta`: weight of the `f4` component of the loss function (maximizing employee working time)
+        - `L`: employee time budget (hard constraint)
+        - `data_load_mode`: how input data is loaded; either `"matrices"` or `"generated"`
+            * `"matrices"` - requires files `T.json`, `Z.json`, and `p.json` with the corresponding matrices in the experiment directory.  
+            * `"generated"` - requires files `employees.json` and `tasks.json` in the experiment directory.  
+                - The `employees.json` file should contain a list of employee objects, where each employee is represented as a dictionary with the following fields:
+                    * `likes_categories` - list of category IDs the employee prefers
+                    * `experience` - integer representing experience level (the higher, the more experienced)
+                    * `comfortable_difficulty` - list representing the range of task difficulties the employee is comfortable with
+                    * `is_good_at_categories` - list of category IDs the employee is skilled in
+                - The `tasks.json` file should contain a list of task objects, where each task is represented as a dictionary with the following fields:
+                    * `difficulty` - integer indicating how difficult the task is (the higher, the more difficult)
+                    * `category` - category ID of the task
+                    * `priority` - integer from 0 to 10 (the higher, the more important the task)
+        """
         with open(self.experiment_catalog / filename, 'r') as file:
             data = json.load(file)
 
@@ -103,7 +133,6 @@ class FileManager():
 
         self._starting_population_logic(verbose, data)
 
-        
         self.validate_and_transform_funcition_names(data)
 
     def validate_and_transform_funcition_names(self, data):
