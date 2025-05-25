@@ -1,0 +1,52 @@
+[
+  {
+    "difficulty": 1,
+    "category": 5,
+    "priority": 3
+  },
+  {
+    "difficulty": 9,
+    "category": 7,
+    "priority": 2
+  },
+  {
+    "difficulty": 20,
+    "category": 1,
+    "priority": 5
+  },
+  {
+    "difficulty": 13,
+    "category": 2,
+    "priority": 4
+  },
+  {
+    "difficulty": 4,
+    "category": 10,
+    "priority": 3
+  },
+  {
+    "difficulty": 13,
+    "category": 0,
+    "priority": 10
+  },
+  {
+    "difficulty": 1,
+    "category": 4,
+    "priority": 7
+  },
+  {
+    "difficulty": 16,
+    "category": 1,
+    "priority": 0
+  },
+  {
+    "difficulty": 10,
+    "category": 9,
+    "priority": 0
+  },
+  {
+    "difficulty": 9,
+    "category": 6,
+    "priority": 1
+  }
+]
