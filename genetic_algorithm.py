@@ -1,3 +1,5 @@
+import importlib
+
 import numpy as np
 
 
@@ -78,17 +80,18 @@ class Solution():
 def find_best_solution(population):
     return min(population, key=lambda obj: obj.f)
 
-def evolutionary_algorithm(
-        population,
-        breed_function, 
-        mutate_function, 
-        select_function, 
-        no_generations: int,
-        ):
+def import_function_by_fqn(fqn):
+    module, name = fqn.split(".")
+    return getattr(importlib.import_module(module), name)
+
+def evolutionary_algorithm(population, **kwargs):
+    breed_function = import_function_by_fqn(kwargs["breed_function"])
+    mutate_function = import_function_by_fqn(kwargs["mutate_function"])
+    select_function = import_function_by_fqn(kwargs["select_function"])
 
     best_solution = find_best_solution(population)
 
-    for generation in range(no_generations):
+    for generation in range(kwargs["no_generations"]):
         children = breed_function(population)
         children = mutate_function(children)
 
