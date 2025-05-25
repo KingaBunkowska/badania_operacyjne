@@ -85,7 +85,18 @@ class FileManager():
         self.L = data["L"]
         num_tasks = len(self.T[0])
         num_employees = len(self.T)
-        Solution.initialize(self.T, self.Z, self.p, self.L, num_employees, num_tasks)
+        Solution.initialize(
+            self.T, 
+            self.Z, 
+            self.p, 
+            self.L, 
+            num_employees, 
+            num_tasks, 
+            data["alpha"],
+            data["beta"],
+            data["gamma"],
+            data["delta"],
+        )
 
         if data["starting_population_mode"] not in ("auto", "from_file"):
             raise ValueError(
