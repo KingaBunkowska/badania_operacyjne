@@ -1,7 +1,7 @@
 {
   "no_generations": 100,
-  "starting_population_mode": "auto",
-  "starting_population_size": 100,
+  "starting_population_mode": "from_file",
+  "starting_population_file": "starting_population.json",
   "breed_function": "random_delete_breed",
   "mutate_function": "random_delete_mutation",
   "select_function": "select_children",

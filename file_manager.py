@@ -57,6 +57,7 @@ class FileManager():
         self.starting_population = None
 
     def load_config(self, filename="config.json", verbose=True):
+
         with open(self.experiment_catalog / filename, 'r') as file:
             data = json.load(file)
 
@@ -152,14 +153,14 @@ class FileManager():
 
         else: # starting_population_mode = "from_file":
             file_path = data["starting_population_file"]
-            if not isinstance(file_path, str) or file_path.endswith(".pkl"):
+            if not isinstance(file_path, str) or not file_path.endswith(".json"):
                 raise ValueError(
                     "Invalid 'starting_population_file': "
-                    f"expected a string ending with '.pkl', got {repr(file_path)}"
+                    f"expected a string ending with '.json', got {repr(file_path)}"
                 )
             
-            with open(file_path, "rb") as f:
-                self.starting_population = pickle.load(f)
+            with open(self.experiment_catalog / file_path, "rb") as f:
+                self.starting_population = self.load_solutions_from_json("starting_population.json")
 
             for pop in self.starting_population:
                 if not isinstance(pop, Solution):
@@ -294,6 +295,15 @@ class FileManager():
         with open(self.experiment_catalog / filename, "w") as f:
             json.dump(matrix, f)
 
+    def save_solutions_to_json(self, filename, solutions: list[Solution]):
+        Rs = [sol.R for sol in solutions]
+        with open(self.experiment_catalog / filename, 'w') as f:
+            json.dump(Rs, f)
+
+    def load_solutions_from_json(self, filename):
+        with open(self.experiment_catalog / filename, 'r') as f:
+            Rs = json.load(f)
+        return [Solution(R) for R in Rs]
 
 if __name__ == "__main__":
 
@@ -307,7 +317,6 @@ if __name__ == "__main__":
     # manager.save_matrix_to_json("Z.json", manager.Z)
     # manager.save_matrix_to_json("p.json", manager.p)
     print(evolutionary_algorithm(**manager.get_evolutionary_algorithm_arguments()).R)
-    print(manager.T)
-
-    manager = FileManager("new_data")
-    manager.save_matrix_to_json("t.json", [1, 2])
+    # print(manager.T)
+    print(manager.starting_population[7].R)
+    # manager.save_solutions_to_json("starting_population.json", manager.starting_population)
