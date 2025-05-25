@@ -75,27 +75,16 @@ class FileManager():
         ]
 
         self.data = data
-        for required_field in required_fields:
-            if required_field not in data.keys():
-                raise ValueError(
-                    f"Cannot find required field {required_field}"
-                    f"in configuration file {filename}"
-                    )
+        self._validate_required_fields(filename, data, required_fields)
 
-        if not isinstance(data["L"], int) or data["L"] <= 0:
-            raise ValueError(
-                "L must be integer > 0"
-            )
+        self._validate_L(data)
 
-        if data["data_load_mode"] not in ("matrices", "generated"):
-            raise ValueError(
-                "Unexpected value of 'data_load_mode':"
-                f"{data["data_load_mode"]}. Expected: 'matrices' or 'generated'"
-                )
+        self._validate_data_load_mode(data)
 
         self.load_data()
 
         self.L = data["L"]
+
         num_tasks = len(self.T[0])
         num_employees = len(self.T)
         Solution.initialize(
@@ -111,6 +100,34 @@ class FileManager():
             data["delta"],
         )
 
+        self._starting_population_logic(verbose, data)
+
+        
+        self.validate_and_transform_funcition_names(data)
+
+    def validate_and_transform_funcition_names(self, data):
+        function_names_dict = get_function_names_dict()
+        self.breed_function_fqn = function_names_dict["breed_function"].get(data["breed_function"])
+        self.mutate_function_fqn = function_names_dict["mutate_function"].get(data["mutate_function"])
+        self.select_function_fqn = function_names_dict["select_function"].get(data["select_function"])
+
+        if self.breed_function_fqn is None:
+            raise ValueError(
+                f"Cannot find function {data["breed_function"]}. "
+                f"Try to one of: {', '.join(function_names_dict["breed_function"].keys())}"
+            )
+        if self.mutate_function_fqn is None:
+            raise ValueError(
+                f"Cannot find function {data["mutate_function"]}. "
+                f"Try to one of: {', '.join(function_names_dict["mutate_function"].keys())}"
+            )
+        if self.select_function_fqn is None:
+            raise ValueError(
+                f"Cannot find function {data["select_function"]}. "
+                f"Try to one of: {', '.join(function_names_dict["select_function"].keys())}"
+            )
+
+    def _starting_population_logic(self, verbose, data):
         if data["starting_population_mode"] not in ("auto", "from_file"):
             raise ValueError(
                 "Unexpected value of 'starting_population_mode':"
@@ -154,26 +171,25 @@ class FileManager():
                     f"{len(self.starting_population)}."
                 )
 
-        function_names_dict = get_function_names_dict()
+    def _validate_data_load_mode(self, data):
+        if data["data_load_mode"] not in ("matrices", "generated"):
+            raise ValueError(
+                "Unexpected value of 'data_load_mode':"
+                f"{data["data_load_mode"]}. Expected: 'matrices' or 'generated'"
+                )
 
-        self.breed_function_fqn = function_names_dict["breed_function"].get(data["breed_function"])
-        self.mutate_function_fqn = function_names_dict["mutate_function"].get(data["mutate_function"])
-        self.select_function_fqn = function_names_dict["select_function"].get(data["select_function"])
+    def _validate_required_fields(self, filename, data, required_fields):
+        for required_field in required_fields:
+            if required_field not in data.keys():
+                raise ValueError(
+                    f"Cannot find required field {required_field}"
+                    f"in configuration file {filename}"
+                    )
 
-        if self.breed_function_fqn is None:
+    def _validate_L(self, data):
+        if not isinstance(data["L"], int) or data["L"] <= 0:
             raise ValueError(
-                f"Cannot find function {data["breed_function"]}. "
-                f"Try to one of: {', '.join(function_names_dict["breed_function"].keys())}"
-            )
-        if self.mutate_function_fqn is None:
-            raise ValueError(
-                f"Cannot find function {data["mutate_function"]}. "
-                f"Try to one of: {', '.join(function_names_dict["mutate_function"].keys())}"
-            )
-        if self.select_function_fqn is None:
-            raise ValueError(
-                f"Cannot find function {data["select_function"]}. "
-                f"Try to one of: {', '.join(function_names_dict["select_function"].keys())}"
+                "L must be integer > 0"
             )
 
     def get_evolutionary_algorithm_arguments(self):
