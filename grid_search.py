@@ -78,7 +78,7 @@ def run_grid_search(params):
 
             results[params.values()] = format_f(solution.get_detailed_f())
 
-        fin.write(f"[[ BEST ]] {format_f(solution.get_detailed_f())} ; {best_params}\n")
+        fin.write(f"[[ BEST ]] {format_f(best_solution.get_detailed_f())} ; {best_params}\n")
 
     return best_solution, best_params, results
 
