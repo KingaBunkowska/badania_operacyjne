@@ -12,7 +12,7 @@ from example_function_file import defined_functions as example_functions
 from genetic_algorithm import Solution
 from lukasz_function import defined_functions as lukasz_functions
 from maciek_function_file import defined_functions_maciek as maciek_functions
-from main import solve
+from taskplanner import solve
 from taskplanner import Employee, Task, generate_input_matrices
 
 
@@ -133,9 +133,9 @@ class FileManager():
 
         self._starting_population_logic(verbose, data)
 
-        self.validate_and_transform_funcition_names(data)
+        self.validate_and_transform_function_names(data)
 
-    def validate_and_transform_funcition_names(self, data):
+    def validate_and_transform_function_names(self, data):
         function_names_dict = get_function_names_dict()
         self.breed_function_fqn = function_names_dict["breed_function"].get(data["breed_function"])
         self.mutate_function_fqn = function_names_dict["mutate_function"].get(data["mutate_function"])
@@ -144,17 +144,17 @@ class FileManager():
         if self.breed_function_fqn is None:
             raise ValueError(
                 f"Cannot find function {data["breed_function"]}. "
-                f"Try to one of: {', '.join(function_names_dict["breed_function"].keys())}"
+                f"Try one of: {', '.join(function_names_dict["breed_function"].keys())}"
             )
         if self.mutate_function_fqn is None:
             raise ValueError(
                 f"Cannot find function {data["mutate_function"]}. "
-                f"Try to one of: {', '.join(function_names_dict["mutate_function"].keys())}"
+                f"Try one of: {', '.join(function_names_dict["mutate_function"].keys())}"
             )
         if self.select_function_fqn is None:
             raise ValueError(
                 f"Cannot find function {data["select_function"]}. "
-                f"Try to one of: {', '.join(function_names_dict["select_function"].keys())}"
+                f"Try one of: {', '.join(function_names_dict["select_function"].keys())}"
             )
 
     def _starting_population_logic(self, verbose, data):
@@ -177,8 +177,9 @@ class FileManager():
                 Solution(solve(*Solution.get_data_and_config()))
                 for _ in range(data["starting_population_size"])
             ]
-            print("Number of individuals in the initial population: "
-                  f"{len(self.starting_population)}.")
+            if verbose:
+                print("Number of individuals in the initial population: "
+                    f"{len(self.starting_population)}.")
 
         else: # starting_population_mode = "from_file":
             file_path = data["starting_population_file"]
@@ -278,10 +279,7 @@ class FileManager():
         for i, entry in enumerate(raw_data):
             try:
                 emp = Employee(
-                    likes_categories=entry["likes_categories"],
-                    experience=entry["experience"],
-                    comfortable_difficulty=entry["comfortable_difficulty"],
-                    is_good_at_categories=entry["is_good_at_categories"]
+                    **entry
                 )
                 employees.append(emp)
             except ValueError as e:
@@ -301,7 +299,7 @@ class FileManager():
         with open(self.experiment_catalog / filename, 'w') as f:
             json.dump(data, f, indent=2)
 
-    def save_employees_to_json(self, employees, filename):
+    def save_employees_to_json(self, employees, filename="employees.json"):
         data = [
             {
                 "likes_categories": e.likes_categories,
