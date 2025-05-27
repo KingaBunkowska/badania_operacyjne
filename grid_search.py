@@ -18,7 +18,7 @@ def functions_to_names(functions):
     return [f"{inspect.getmodule(f).__name__}.{f.__name__}" for f in functions]
 
 grid_params = {
-    "no_generations": [50, 100, 200],
+    "no_generations": [50, 100],
     "breed_function": functions_to_names([
         *example_functions["breed"],
         *evolutionary_functions["breed"],
@@ -58,24 +58,27 @@ def run_grid_search(params):
 
         starting_population = [Solution(solve(*Solution.get_data_and_config())) for _ in range(200)]
 
+        def format_f(detailed_f):
+            return [float(x) for x in detailed_f]
+
         for combination in tqdm(param_combinations, desc=process_name):
             params = dict(zip(param_names, combination))
             solution = evolutionary_algorithm(starting_population, **params)
 
-            fin.write(f"{solution.get_detailed_f()} ; {params}\n")
+            fin.write(f"{format_f(solution.get_detailed_f())} ; {params}\n")
 
             if best_solution is None or best_solution.f > solution.f:
                 best_solution = copy.deepcopy(solution)
                 best_params = copy.deepcopy(params)
                 print()
-                print(best_solution.f)
+                print(float(best_solution.f))
                 print(best_params)
                 print()
                 print()
 
-            results[params.values()] = solution.get_detailed_f()
+            results[params.values()] = format_f(solution.get_detailed_f())
 
-        fin.write(f"[[ BEST ]] {best_solution.get_detailed_f()} ; {best_params}\n")
+        fin.write(f"[[ BEST ]] {format_f(solution.get_detailed_f())} ; {best_params}\n")
 
     return best_solution, best_params, results
 
@@ -86,7 +89,7 @@ def equal_split(data, n_chunks):
     for _ in range(n_chunks-1):
         yield data[start:start+chunk_size]
         start += chunk_size
-    yield data[chunk_size:]
+    yield data[start:]
 
 if __name__ == "__main__":
     employees = [
