@@ -18,7 +18,7 @@ def get_evaluator_fn(alpha, beta, gamma, delta):
 
 class Solution():
     T = Z = p = L = num_employees = num_tasks = None
-    def __init__(self, R, loss_function=get_evaluator_fn(10, 1, 100, 10), age=0):
+    def __init__(self, R, loss_function=get_evaluator_fn(30, 1, 3000, 20), age=0):
         self.age = age
         self.R = R
         self.loss_function = loss_function
