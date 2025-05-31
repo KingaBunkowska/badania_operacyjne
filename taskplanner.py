@@ -33,6 +33,9 @@ class Employee:
         loc = 3 + 2 * like_factor
         scale = 2
         return int(round(np.clip(np.random.normal(loc, scale), 0, 10)))
+    
+    def __repr__(self):
+        return f"Employee ({self.experience}) good at: {self.is_good_at_categories}"
 
 
 def generate_tasks(num_tasks):

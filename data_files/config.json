@@ -1,0 +1,14 @@
+{
+  "no_generations": 100,
+  "starting_population_mode": "from_file",
+  "starting_population_file": "starting_population.json",
+  "breed_function": "random_delete_breed",
+  "mutate_function": "random_delete_mutation",
+  "select_function": "select_children",
+  "alpha": 0.25,
+  "beta": 0.25,
+  "gamma": 0.25,
+  "delta": 100,
+  "L": 40,
+  "data_load_mode": "matrices"
+}
