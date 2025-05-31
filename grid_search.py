@@ -21,17 +21,17 @@ grid_params = {
     "no_generations": [50, 100],
     "breed_function": functions_to_names([
         *example_functions["breed"],
-        *evolutionary_functions["breed"],
-        *dominance_hierarchy_functions["breed"],
-        *lukasz_functions["breed"],
-        *maciek_functions["breed"],
+        # *evolutionary_functions["breed"],
+        # *dominance_hierarchy_functions["breed"],
+        # *lukasz_functions["breed"],
+        # *maciek_functions["breed"],
     ]),
     "mutate_function": functions_to_names([
         *example_functions["mutate"],
         *evolutionary_functions["mutate"],
-        *dominance_hierarchy_functions["mutate"],
-        *lukasz_functions["mutate"],
-        *maciek_functions["mutate"],
+        # *dominance_hierarchy_functions["mutate"],
+        # *lukasz_functions["mutate"],
+        # *maciek_functions["mutate"],
     ]),
     "select_function": functions_to_names([
         *example_functions["select"],
@@ -79,8 +79,6 @@ def run_grid_search(params):
             results[params.values()] = format_f(solution.get_detailed_f())
 
         fin.write(f"[[ BEST ]] {format_f(best_solution.get_detailed_f())} ; {best_params}\n")
-
-    return best_solution, best_params, results
 
 def equal_split(data, n_chunks):
     chunk_size = len(data) // n_chunks
