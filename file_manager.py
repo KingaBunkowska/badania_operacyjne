@@ -13,7 +13,8 @@ from genetic_algorithm import Solution
 from lukasz_function import defined_functions as lukasz_functions
 from maciek_function_file import defined_functions_maciek as maciek_functions
 from taskplanner import solve
-from taskplanner import Employee, Task, generate_input_matrices
+from taskplanner import Employee, Task, generate_input_matrices, generate_tasks
+import time
 
 
 def get_function_names_dict():
@@ -166,7 +167,7 @@ class FileManager():
 
         if data["starting_population_mode"] == "auto":
             if "starting_population_size" not in data.keys():
-                raise ValueError("Specify population size when using mode 'auto'")
+                raise ValueError("Specify population size when using mode 'auto'. Use parameter: 'starting_population_size")
             if (
                 not isinstance(data["starting_population_size"], int) 
                 or data["starting_population_size"] < 2
@@ -321,6 +322,7 @@ class FileManager():
     def save_matrix_to_json(self, filename, matrix, flag="w"):
         with open(self.experiment_catalog / filename, flag) as f:
             json.dump(matrix, f)
+            f.write('\n')
 
     def save_solutions_to_json(self, filename, solutions: list[Solution], flag="w"):
         Rs = [sol.R for sol in solutions]
@@ -332,12 +334,11 @@ class FileManager():
             Rs = json.load(f)
         return [Solution(R) for R in Rs]
 
-
 class Logger(FileManager):
     def __init__(self, catalog='data_files', experiment_results_catalog=None):
-        super().__init__(self, catalog)
+        super().__init__(catalog)
         if experiment_results_catalog is None:
-            self.experiment_results_catalog = self._get_next_folder()
+            self.experiment_results_catalog = self._get_next_catalog()
         else:
             self.experiment_results_catalog = experiment_results_catalog
 
@@ -345,14 +346,16 @@ class Logger(FileManager):
 
         os.makedirs(self.experiment_results_full_path)
         self.iter_number = 0
+        self.time_of_start = time.time()
 
+        print(f"Logs available in directory: {self.experiment_results_full_path}")
 
-    def _get_next_directory(self):
-        default_name = "experiment_data_"
+    def _get_next_catalog(self):
+        default_name = "experiment_data"
 
         i = 0
         while True:
-            full_path = self.experiment_catalog / default_name / i
+            full_path = self.experiment_catalog / f"{default_name}_{i}"
             if not os.path.isdir(full_path):
                 return full_path
             i += 1
@@ -368,12 +371,12 @@ class Logger(FileManager):
         )
         csv_headers = ["iteration", "time_from_start", "f1", "f2", "f3", "f4", "f"]
         headers_str = ",".join(header for header in csv_headers)
-        csv_values = [self.iter_number, time-self.time_of_start] + fs
+        csv_values = [self.iter_number, time-self.time_of_start] + list(fs)
         values_str = ",".join(str(v) for v in csv_values)
-        with open(self.experiment_results_full_path / "results.csv") as results:
+        with open(self.experiment_results_full_path / "results.csv", "a") as results:
             if self.iter_number == 0:
-                results.write(headers_str)
-            results.write(values_str)
+                results.write(headers_str+"\n")
+            results.write(values_str+"\n")
         self.iter_number += 1
 
 if __name__ == "__main__":
@@ -387,7 +390,9 @@ if __name__ == "__main__":
     # manager.save_matrix_to_json("T.json", manager.T)
     # manager.save_matrix_to_json("Z.json", manager.Z)
     # manager.save_matrix_to_json("p.json", manager.p)
-    print(evolutionary_algorithm(**manager.get_evolutionary_algorithm_arguments()).R)
-    # print(manager.T)
-    print(manager.starting_population[7].R)
+    # print(evolutionary_algorithm(**manager.get_evolutionary_algorithm_arguments()).R)
+    # # print(manager.T)
+    # print(manager.starting_population[7].R)
     # manager.save_solutions_to_json("starting_population.json", manager.starting_population)
+
+    manager.save_tasks_to_json(generate_tasks(100))
