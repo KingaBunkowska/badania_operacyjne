@@ -318,19 +318,63 @@ class FileManager():
 
         return matrix
 
-    def save_matrix_to_json(self, filename, matrix):
-        with open(self.experiment_catalog / filename, "w") as f:
+    def save_matrix_to_json(self, filename, matrix, flag="w"):
+        with open(self.experiment_catalog / filename, flag) as f:
             json.dump(matrix, f)
 
-    def save_solutions_to_json(self, filename, solutions: list[Solution]):
+    def save_solutions_to_json(self, filename, solutions: list[Solution], flag="w"):
         Rs = [sol.R for sol in solutions]
-        with open(self.experiment_catalog / filename, 'w') as f:
+        with open(self.experiment_catalog / filename, flag) as f:
             json.dump(Rs, f)
 
     def load_solutions_from_json(self, filename):
         with open(self.experiment_catalog / filename, 'r') as f:
             Rs = json.load(f)
         return [Solution(R) for R in Rs]
+
+
+class Logger(FileManager):
+    def __init__(self, catalog='data_files', experiment_results_catalog=None):
+        super().__init__(self, catalog)
+        if experiment_results_catalog is None:
+            self.experiment_results_catalog = self._get_next_folder()
+        else:
+            self.experiment_results_catalog = experiment_results_catalog
+
+        self.experiment_results_full_path = self.experiment_catalog / self.experiment_results_catalog
+
+        os.makedirs(self.experiment_results_full_path)
+        self.iter_number = 0
+
+
+    def _get_next_directory(self):
+        default_name = "experiment_data_"
+
+        i = 0
+        while True:
+            full_path = self.experiment_catalog / default_name / i
+            if not os.path.isdir(full_path):
+                return full_path
+            i += 1
+
+    def init_time_of_start(self, time):
+        self.time_of_start = time
+
+    def log_iteration(self, solution: Solution, fs: list[float], time: int):
+        self.save_matrix_to_json(
+            self.experiment_results_full_path / "solutions.txt",
+            solution.R,
+            flag = "a"
+        )
+        csv_headers = ["iteration", "time_from_start", "f1", "f2", "f3", "f4", "f"]
+        headers_str = ",".join(header for header in csv_headers)
+        csv_values = [self.iter_number, time-self.time_of_start] + fs
+        values_str = ",".join(str(v) for v in csv_values)
+        with open(self.experiment_results_full_path / "results.csv") as results:
+            if self.iter_number == 0:
+                results.write(headers_str)
+            results.write(values_str)
+        self.iter_number += 1
 
 if __name__ == "__main__":
 
