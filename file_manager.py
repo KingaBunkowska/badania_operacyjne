@@ -14,7 +14,7 @@ from genetic_algorithm import Solution
 from lukasz_function import defined_functions as lukasz_functions
 from maciek_function_file import defined_functions_maciek as maciek_functions
 from taskplanner import solve
-from taskplanner import Employee, Task, generate_input_matrices, generate_tasks
+from taskplanner import Employee, Task, generate_input_matrices, generate_tasks, generate_employees
 
 
 
@@ -89,6 +89,10 @@ class FileManager():
                     * `difficulty` - integer indicating how difficult the task is (the higher, the more difficult)
                     * `category` - category ID of the task
                     * `priority` - integer from 0 to 10 (the higher, the more important the task)
+            * `"auto"` - requires fileds `"num_tasks"` and `"num_employees"` to be provided as positive integers. Mock data will be automatically generated based on these counts.
+
+        If the optional field `save_matrices` is included in the configuration, the files `T.json`, `Z.json`, `p.json`, and `starting_population.json` will be saved inside the log directory. These files can be used to replicate the experiment or to test other methods on the same data.
+
         """
         with open(self.experiment_catalog / filename, 'r') as file:
             data = json.load(file)
@@ -104,7 +108,7 @@ class FileManager():
             "gamma", 
             "delta",
             "L",
-            "data_load_mode" # "matrices", "generated"
+            "data_load_mode" # "matrices", "generated", "auto"
         ]
 
         self.data = data
@@ -205,17 +209,36 @@ class FileManager():
                 )
 
     def _validate_data_load_mode(self, data):
-        if data["data_load_mode"] not in ("matrices", "generated"):
+        if data["data_load_mode"] not in ("matrices", "generated", "auto"):
             raise ValueError(
                 "Unexpected value of 'data_load_mode':"
-                f"{data["data_load_mode"]}. Expected: 'matrices' or 'generated'"
+                f"{data["data_load_mode"]}. Expected: 'matrices', 'generated' or 'auto'"
                 )
+        
+        if data["data_load_mode"] == "auto" and (
+            "num_employees" not in data.keys() 
+            or not isinstance(data["num_employees"], int) 
+            or data["num_employees"] <= 0
+        ):
+            raise ValueError(
+                f"In 'auto' mode, you must provide a 'num_employees' field with a positive integer value."
+            )
+
+        if data["data_load_mode"] == "auto" and (
+            "num_tasks" not in data.keys() 
+            or not isinstance(data["num_tasks"], int) 
+            or data["num_tasks"] <= 0
+        ):
+            raise ValueError(
+                f"In 'auto' mode, you must provide a 'num_tasks' field with a positive integer value."
+            )
+
 
     def _validate_required_fields(self, filename, data, required_fields):
         for required_field in required_fields:
             if required_field not in data.keys():
                 raise ValueError(
-                    f"Cannot find required field {required_field}"
+                    f"Cannot find required field {required_field} "
                     f"in configuration file {filename}"
                     )
 
@@ -237,6 +260,8 @@ class FileManager():
     def load_data(self):
         if self.data["data_load_mode"] == "generated":
             self._load_tasks_employees()
+        elif self.data["data_load_mode"] == "auto":
+            self._generate_data(self.data["num_tasks"], self.data["num_employees"])
         else: # "data_load_mode" = "matrices"
             self._load_T_Z_p()
 
@@ -250,6 +275,12 @@ class FileManager():
         self.T = self.load_matrix_from_json("T.json")
         self.Z = self.load_matrix_from_json("Z.json")
         self.p = self.load_matrix_from_json("p.json")
+
+    def _generate_data(self, num_tasks, num_employees):
+        tasks = generate_tasks(num_tasks)
+        employees = generate_employees(num_employees)
+
+        self.T, self.Z, self.p = generate_input_matrices(employees, tasks)
 
     def _validate_task(self, task_dict):
         if not (0 <= int(task_dict["priority"]) <= 10):
@@ -346,7 +377,6 @@ class Logger(FileManager):
         else:
             self.experiment_results_catalog = experiment_results_catalog
 
-
         self.experiment_results_full_path = self.experiment_catalog / self.experiment_results_catalog
 
         os.makedirs(self.experiment_results_full_path)
@@ -371,26 +401,20 @@ class Logger(FileManager):
         headers_str = ",".join(csv_headers)
         csv_values = [self.iter_number, time-self.time_of_start] + list(fs)
         values_str = ",".join(f"{v:.3f}" for v in csv_values)
-        with open(self.experiment_results_full_path / "results.csv", "a") as results:
+        with open("results.csv", "a") as results:
             if self.iter_number == 0:
                 results.write(headers_str+"\n")
             results.write(values_str+"\n")
         self.iter_number += 1
 
-if __name__ == "__main__":
+    def load_config(self, filename="config.json", verbose=True):
+        super().load_config(filename, verbose)
+        if "save_matrices" in self.data.keys():
+            self._save_matrices()
 
-    # test
-    from genetic_algorithm import evolutionary_algorithm
 
-    manager = FileManager()
-    manager.load_config()
-
-    # manager.save_matrix_to_json("T.json", manager.T)
-    # manager.save_matrix_to_json("Z.json", manager.Z)
-    # manager.save_matrix_to_json("p.json", manager.p)
-    # print(evolutionary_algorithm(**manager.get_evolutionary_algorithm_arguments()).R)
-    # # print(manager.T)
-    # print(manager.starting_population[7].R)
-    # manager.save_solutions_to_json("starting_population.json", manager.starting_population)
-
-    manager.save_tasks_to_json(generate_tasks(100))
+    def _save_matrices(self):
+        self.save_solutions_to_json(f"{self.experiment_results_full_path}/starting_population.json", self.starting_population)
+        self.save_matrix_to_json(f"{self.experiment_results_full_path}/T.json", self.T)
+        self.save_matrix_to_json(f"{self.experiment_results_full_path}/Z.json", self.Z)
+        self.save_matrix_to_json(f"{self.experiment_results_full_path}/p.json", self.p)
