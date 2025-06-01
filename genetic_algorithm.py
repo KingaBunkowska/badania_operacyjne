@@ -4,7 +4,6 @@ import numpy as np
 import time
 from tqdm import tqdm
 
-
 def get_evaluator_fn(alpha, beta, gamma, delta):
     def evaluate(T, Z, p, R, L=40):
         time_spent = np.array(T) * np.array(R)

@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import random
 
 from genetic_algorithm import evolutionary_algorithm
 from file_manager import FileManager, Logger
@@ -16,6 +17,8 @@ if __name__ == "__main__":
     else:
         folder_name = sys.argv[1]
         experiment_results_catalog = sys.argv[2]
+
+    random.seed(0)
 
     file_manager = Logger(folder_name, experiment_results_catalog)
     file_manager.load_config()

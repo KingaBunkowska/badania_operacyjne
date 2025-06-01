@@ -9,6 +9,6 @@
   "beta": 1,
   "gamma": 3000,
   "delta": 20,
-  "L": 80,
+  "L": 40,
   "data_load_mode": "matrices"
 }

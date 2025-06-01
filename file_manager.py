@@ -401,7 +401,7 @@ class Logger(FileManager):
         headers_str = ",".join(csv_headers)
         csv_values = [self.iter_number, time-self.time_of_start] + list(fs)
         values_str = ",".join(f"{v:.3f}" for v in csv_values)
-        with open("results.csv", "a") as results:
+        with open(self.experiment_results_full_path / "results.csv", "a") as results:
             if self.iter_number == 0:
                 results.write(headers_str+"\n")
             results.write(values_str+"\n")
@@ -418,3 +418,8 @@ class Logger(FileManager):
         self.save_matrix_to_json(f"{self.experiment_results_full_path}/T.json", self.T)
         self.save_matrix_to_json(f"{self.experiment_results_full_path}/Z.json", self.Z)
         self.save_matrix_to_json(f"{self.experiment_results_full_path}/p.json", self.p)
+
+if __name__ == "__main__":
+    manager = FileManager("data_files")
+    manager.save_tasks_to_json(generate_tasks(50))
+    manager.save_employees_to_json(generate_employees(10))
