@@ -89,6 +89,7 @@ class FileManager():
                     * `difficulty` - integer indicating how difficult the task is (the higher, the more difficult)
                     * `category` - category ID of the task
                     * `priority` - integer from 0 to 10 (the higher, the more important the task)
+            * `"auto"` - requires fileds `"num_tasks"` and `"num_employees"` to be provided as positive integers. Mock data will be automatically generated based on these counts.
         """
         with open(self.experiment_catalog / filename, 'r') as file:
             data = json.load(file)
