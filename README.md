@@ -36,6 +36,23 @@ where:
 - $f_4$ — maximizes employee working time utilization
 ---
 
+## How to use
+
+#### Installing dependencies
+```bash
+pip install -r requirements.txt
+```
+#### Running program
+```bash
+python main.py [experiment_catalog_name] [log_catalog_name]
+```
+- `experiment_catalog_name` (optional):
+Name of the folder containing experiment data. This folder should be located in the working directory and contain a `config.json` file, along with any other required files.
+
+- `log_catalog_name` (optional):
+Name of the folder where logs will be saved. Folder will be located inside experiement catalog. If not present folder will be automaticly generated.
+
+
 ### Experiment Configuration (`config.json`)
 
 Each experiment requires a `config.json` file located in the experiment directory. This configuration file defines all necessary parameters to run the algorithm.
@@ -55,7 +72,7 @@ Each experiment requires a `config.json` file located in the experiment director
 - **`L`** – time budget per employee (a hard constraint).
 - **`data_load_mode`** – how input data is provided:
   - `"matrices"` – requires the presence of `T.json`, `Z.json`, and `p.json` files with the corresponding matrices in the experiment directory.
-  - `"generated"` – requires `employees.json` and `tasks.json` files describing the data structure:
+  - `"generated"` – requires both `employees.json` and `tasks.json` files describing the data structure:
     - **`employees.json`** should be a list of employee objects, each with:
       - `likes_categories`: list of preferred category IDs
       - `experience`: integer representing experience level
@@ -65,5 +82,6 @@ Each experiment requires a `config.json` file located in the experiment director
       - `difficulty`: integer indicating the task’s difficulty
       - `category`: category ID of the task
       - `priority`: integer from 0 to 10 indicating task importance
+  - `"auto"` - requires `num_tasks` and `num_employees`. Mock data will be automatically generated based on these counts. 
 
 ---
