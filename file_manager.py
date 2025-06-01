@@ -401,7 +401,7 @@ class Logger(FileManager):
         headers_str = ",".join(csv_headers)
         csv_values = [self.iter_number, time-self.time_of_start] + list(fs)
         values_str = ",".join(f"{v:.3f}" for v in csv_values)
-        with open("results.csv", "a") as results:
+        with open(self.experiment_results_full_path / "results.csv", "a") as results:
             if self.iter_number == 0:
                 results.write(headers_str+"\n")
             results.write(values_str+"\n")

@@ -1,502 +1,252 @@
 [
   {
-    "difficulty": 6,
-    "category": 3,
-    "priority": 8
+    "difficulty": 11,
+    "category": 4,
+    "priority": 9
   },
   {
-    "difficulty": 10,
-    "category": 6,
-    "priority": 2
-  },
-  {
-    "difficulty": 1,
-    "category": 0,
-    "priority": 0
-  },
-  {
-    "difficulty": 1,
+    "difficulty": 7,
     "category": 3,
     "priority": 3
   },
   {
-    "difficulty": 19,
-    "category": 2,
+    "difficulty": 1,
+    "category": 7,
+    "priority": 10
+  },
+  {
+    "difficulty": 10,
+    "category": 10,
+    "priority": 0
+  },
+  {
+    "difficulty": 7,
+    "category": 10,
     "priority": 6
   },
   {
-    "difficulty": 14,
+    "difficulty": 6,
+    "category": 10,
+    "priority": 4
+  },
+  {
+    "difficulty": 3,
+    "category": 2,
+    "priority": 5
+  },
+  {
+    "difficulty": 13,
+    "category": 9,
+    "priority": 6
+  },
+  {
+    "difficulty": 1,
+    "category": 8,
+    "priority": 2
+  },
+  {
+    "difficulty": 6,
+    "category": 9,
+    "priority": 5
+  },
+  {
+    "difficulty": 1,
+    "category": 6,
+    "priority": 7
+  },
+  {
+    "difficulty": 9,
     "category": 7,
+    "priority": 8
+  },
+  {
+    "difficulty": 6,
+    "category": 8,
+    "priority": 4
+  },
+  {
+    "difficulty": 25,
+    "category": 7,
+    "priority": 10
+  },
+  {
+    "difficulty": 9,
+    "category": 8,
+    "priority": 1
+  },
+  {
+    "difficulty": 10,
+    "category": 10,
+    "priority": 8
+  },
+  {
+    "difficulty": 5,
+    "category": 4,
+    "priority": 6
+  },
+  {
+    "difficulty": 7,
+    "category": 4,
+    "priority": 6
+  },
+  {
+    "difficulty": 7,
+    "category": 2,
     "priority": 3
   },
   {
     "difficulty": 3,
-    "category": 9,
-    "priority": 1
+    "category": 6,
+    "priority": 9
   },
   {
-    "difficulty": 1,
-    "category": 4,
-    "priority": 0
-  },
-  {
-    "difficulty": 14,
-    "category": 9,
-    "priority": 3
-  },
-  {
-    "difficulty": 5,
-    "category": 1,
-    "priority": 6
-  },
-  {
-    "difficulty": 1,
-    "category": 1,
-    "priority": 3
-  },
-  {
-    "difficulty": 4,
+    "difficulty": 3,
     "category": 5,
-    "priority": 6
+    "priority": 2
   },
   {
-    "difficulty": 18,
-    "category": 7,
-    "priority": 3
-  },
-  {
-    "difficulty": 12,
-    "category": 8,
-    "priority": 0
-  },
-  {
-    "difficulty": 4,
+    "difficulty": 15,
     "category": 3,
-    "priority": 4
-  },
-  {
-    "difficulty": 1,
-    "category": 3,
-    "priority": 7
-  },
-  {
-    "difficulty": 11,
-    "category": 9,
-    "priority": 4
-  },
-  {
-    "difficulty": 14,
-    "category": 5,
-    "priority": 0
-  },
-  {
-    "difficulty": 1,
-    "category": 7,
-    "priority": 0
+    "priority": 8
   },
   {
     "difficulty": 2,
-    "category": 8,
-    "priority": 6
+    "category": 7,
+    "priority": 9
   },
   {
-    "difficulty": 19,
-    "category": 6,
+    "difficulty": 2,
+    "category": 4,
+    "priority": 3
+  },
+  {
+    "difficulty": 1,
+    "category": 8,
+    "priority": 5
+  },
+  {
+    "difficulty": 16,
+    "category": 9,
+    "priority": 10
+  },
+  {
+    "difficulty": 13,
+    "category": 5,
+    "priority": 2
+  },
+  {
+    "difficulty": 3,
+    "category": 1,
+    "priority": 10
+  },
+  {
+    "difficulty": 14,
+    "category": 8,
     "priority": 8
   },
   {
     "difficulty": 1,
-    "category": 7,
+    "category": 5,
+    "priority": 0
+  },
+  {
+    "difficulty": 5,
+    "category": 9,
+    "priority": 0
+  },
+  {
+    "difficulty": 3,
+    "category": 8,
+    "priority": 4
+  },
+  {
+    "difficulty": 6,
+    "category": 5,
     "priority": 7
   },
   {
-    "difficulty": 22,
+    "difficulty": 8,
     "category": 6,
+    "priority": 4
+  },
+  {
+    "difficulty": 13,
+    "category": 10,
+    "priority": 6
+  },
+  {
+    "difficulty": 5,
+    "category": 1,
+    "priority": 7
+  },
+  {
+    "difficulty": 12,
+    "category": 4,
     "priority": 0
   },
   {
     "difficulty": 1,
-    "category": 0,
+    "category": 1,
+    "priority": 6
+  },
+  {
+    "difficulty": 1,
+    "category": 10,
     "priority": 5
   },
   {
-    "difficulty": 9,
-    "category": 4,
-    "priority": 7
-  },
-  {
-    "difficulty": 22,
-    "category": 9,
-    "priority": 1
-  },
-  {
-    "difficulty": 2,
+    "difficulty": 19,
     "category": 5,
-    "priority": 5
+    "priority": 0
   },
   {
-    "difficulty": 18,
-    "category": 4,
+    "difficulty": 16,
+    "category": 6,
     "priority": 2
   },
   {
     "difficulty": 12,
-    "category": 2,
-    "priority": 9
+    "category": 7,
+    "priority": 10
   },
   {
-    "difficulty": 12,
-    "category": 8,
-    "priority": 3
+    "difficulty": 17,
+    "category": 2,
+    "priority": 4
+  },
+  {
+    "difficulty": 5,
+    "category": 5,
+    "priority": 4
+  },
+  {
+    "difficulty": 10,
+    "category": 9,
+    "priority": 6
   },
   {
     "difficulty": 13,
     "category": 1,
-    "priority": 6
-  },
-  {
-    "difficulty": 11,
-    "category": 9,
-    "priority": 6
-  },
-  {
-    "difficulty": 3,
-    "category": 10,
-    "priority": 1
-  },
-  {
-    "difficulty": 9,
-    "category": 10,
-    "priority": 4
-  },
-  {
-    "difficulty": 12,
-    "category": 5,
-    "priority": 4
-  },
-  {
-    "difficulty": 9,
-    "category": 6,
-    "priority": 0
-  },
-  {
-    "difficulty": 2,
-    "category": 2,
-    "priority": 0
-  },
-  {
-    "difficulty": 1,
-    "category": 1,
-    "priority": 0
-  },
-  {
-    "difficulty": 7,
-    "category": 2,
-    "priority": 8
-  },
-  {
-    "difficulty": 1,
-    "category": 3,
-    "priority": 0
-  },
-  {
-    "difficulty": 1,
-    "category": 5,
-    "priority": 1
-  },
-  {
-    "difficulty": 16,
-    "category": 1,
-    "priority": 4
-  },
-  {
-    "difficulty": 14,
-    "category": 7,
-    "priority": 10
+    "priority": 2
   },
   {
     "difficulty": 6,
     "category": 9,
-    "priority": 8
-  },
-  {
-    "difficulty": 16,
-    "category": 10,
-    "priority": 9
-  },
-  {
-    "difficulty": 1,
-    "category": 5,
-    "priority": 10
-  },
-  {
-    "difficulty": 9,
-    "category": 8,
-    "priority": 9
-  },
-  {
-    "difficulty": 4,
-    "category": 3,
-    "priority": 5
-  },
-  {
-    "difficulty": 14,
-    "category": 3,
-    "priority": 9
-  },
-  {
-    "difficulty": 15,
-    "category": 4,
-    "priority": 6
-  },
-  {
-    "difficulty": 30,
-    "category": 8,
-    "priority": 0
-  },
-  {
-    "difficulty": 21,
-    "category": 6,
-    "priority": 9
-  },
-  {
-    "difficulty": 14,
-    "category": 7,
-    "priority": 4
-  },
-  {
-    "difficulty": 4,
-    "category": 1,
-    "priority": 9
-  },
-  {
-    "difficulty": 19,
-    "category": 5,
-    "priority": 3
-  },
-  {
-    "difficulty": 1,
-    "category": 6,
-    "priority": 4
-  },
-  {
-    "difficulty": 1,
-    "category": 2,
-    "priority": 9
-  },
-  {
-    "difficulty": 30,
-    "category": 10,
-    "priority": 10
-  },
-  {
-    "difficulty": 7,
-    "category": 9,
-    "priority": 9
-  },
-  {
-    "difficulty": 3,
-    "category": 9,
-    "priority": 0
-  },
-  {
-    "difficulty": 18,
-    "category": 3,
     "priority": 1
-  },
-  {
-    "difficulty": 1,
-    "category": 4,
-    "priority": 0
-  },
-  {
-    "difficulty": 3,
-    "category": 4,
-    "priority": 7
-  },
-  {
-    "difficulty": 4,
-    "category": 0,
-    "priority": 1
-  },
-  {
-    "difficulty": 20,
-    "category": 6,
-    "priority": 10
-  },
-  {
-    "difficulty": 1,
-    "category": 9,
-    "priority": 6
-  },
-  {
-    "difficulty": 1,
-    "category": 5,
-    "priority": 6
-  },
-  {
-    "difficulty": 6,
-    "category": 8,
-    "priority": 6
-  },
-  {
-    "difficulty": 15,
-    "category": 5,
-    "priority": 9
-  },
-  {
-    "difficulty": 2,
-    "category": 9,
-    "priority": 10
-  },
-  {
-    "difficulty": 2,
-    "category": 9,
-    "priority": 2
-  },
-  {
-    "difficulty": 1,
-    "category": 3,
-    "priority": 3
-  },
-  {
-    "difficulty": 14,
-    "category": 8,
-    "priority": 8
-  },
-  {
-    "difficulty": 1,
-    "category": 8,
-    "priority": 7
-  },
-  {
-    "difficulty": 2,
-    "category": 7,
-    "priority": 2
-  },
-  {
-    "difficulty": 32,
-    "category": 5,
-    "priority": 10
   },
   {
     "difficulty": 10,
-    "category": 6,
-    "priority": 7
-  },
-  {
-    "difficulty": 11,
-    "category": 3,
+    "category": 7,
     "priority": 2
   },
   {
     "difficulty": 1,
-    "category": 8,
-    "priority": 8
-  },
-  {
-    "difficulty": 14,
     "category": 7,
     "priority": 4
   },
   {
-    "difficulty": 29,
-    "category": 4,
-    "priority": 6
-  },
-  {
-    "difficulty": 7,
+    "difficulty": 1,
     "category": 0,
-    "priority": 2
-  },
-  {
-    "difficulty": 7,
-    "category": 8,
     "priority": 1
-  },
-  {
-    "difficulty": 11,
-    "category": 0,
-    "priority": 4
-  },
-  {
-    "difficulty": 1,
-    "category": 2,
-    "priority": 10
-  },
-  {
-    "difficulty": 24,
-    "category": 1,
-    "priority": 10
-  },
-  {
-    "difficulty": 1,
-    "category": 2,
-    "priority": 1
-  },
-  {
-    "difficulty": 4,
-    "category": 7,
-    "priority": 8
-  },
-  {
-    "difficulty": 25,
-    "category": 6,
-    "priority": 10
-  },
-  {
-    "difficulty": 1,
-    "category": 0,
-    "priority": 9
-  },
-  {
-    "difficulty": 1,
-    "category": 1,
-    "priority": 7
-  },
-  {
-    "difficulty": 20,
-    "category": 6,
-    "priority": 6
-  },
-  {
-    "difficulty": 8,
-    "category": 0,
-    "priority": 10
-  },
-  {
-    "difficulty": 20,
-    "category": 1,
-    "priority": 7
-  },
-  {
-    "difficulty": 3,
-    "category": 6,
-    "priority": 6
-  },
-  {
-    "difficulty": 1,
-    "category": 3,
-    "priority": 7
-  },
-  {
-    "difficulty": 22,
-    "category": 0,
-    "priority": 6
-  },
-  {
-    "difficulty": 20,
-    "category": 3,
-    "priority": 2
-  },
-  {
-    "difficulty": 5,
-    "category": 8,
-    "priority": 1
-  },
-  {
-    "difficulty": 5,
-    "category": 6,
-    "priority": 7
   }
 ]
