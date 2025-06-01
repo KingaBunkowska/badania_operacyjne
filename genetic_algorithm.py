@@ -2,6 +2,7 @@ import importlib
 import inspect
 import numpy as np
 import time
+from tqdm import tqdm
 
 
 def get_evaluator_fn(alpha, beta, gamma, delta):
@@ -109,14 +110,16 @@ def import_function_by_fqn(fqn):
     module, name = fqn.split(".")
     return getattr(importlib.import_module(module), name)
 
-def evolutionary_algorithm(population, logger=None, **kwargs):
+def evolutionary_algorithm(population, logger=None, show_progress=False, **kwargs):
     breed_function = import_function_by_fqn(kwargs["breed_function"])
     mutate_function = import_function_by_fqn(kwargs["mutate_function"])
     select_function = import_function_by_fqn(kwargs["select_function"])
 
     best_solution = find_best_solution(population)
 
-    for generation in range(kwargs["no_generations"]):
+    iterable = tqdm(range(kwargs["no_generations"])) if show_progress else range(kwargs["no_generations"])
+
+    for generation in iterable:
         children = breed_function(population)
         children = mutate_function(children)
 

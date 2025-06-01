@@ -1,5 +1,5 @@
 import numpy as np
-from random import randint, shuffle
+from random import randint, shuffle, sample
 
 
 class Task:
@@ -42,6 +42,23 @@ def generate_tasks(num_tasks):
     task_difficulties = [max(1, int(x)) for x in list(np.random.normal(8, 8, (num_tasks,)))]
     tasks = [Task(difficulty, randint(0, 10), randint(0, 10)) for difficulty in task_difficulties]
     return tasks
+
+def generate_employees(num_employees):
+    categories = range(0, 10)
+    employees = []
+    for n in range(num_employees):
+        level = randint(1, 5)
+        number_of_good_categories = np.clip(randint(0, 10) + randint(0, level), 0, 10)
+        number_of_liked_categories = min(10 - number_of_good_categories + randint(0, 2), 10)
+
+        liked_categories = sample(categories, number_of_liked_categories)
+        good_categories = sample(categories, number_of_liked_categories)
+        comfortable_difficulty_start = max(randint(0, 15) - 2*level, 0)
+        comfortable_difficulty_diff = randint(0, level**2) + randint(0, 5)
+        comfortable_difficulty = (comfortable_difficulty_start, comfortable_difficulty_diff + comfortable_difficulty_start)
+
+        employees.append(Employee(liked_categories, level, comfortable_difficulty, good_categories))
+    return employees
 
 def generate_input_matrices(employees, tasks):
     T = []
