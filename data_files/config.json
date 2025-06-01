@@ -10,5 +10,6 @@
   "gamma": 3000,
   "delta": 20,
   "L": 40,
-  "data_load_mode": "matrices"
+  "data_load_mode": "generated",
+  "save_matrices": 1
 }
