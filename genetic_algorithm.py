@@ -1,6 +1,7 @@
 import importlib
 import inspect
 import numpy as np
+import time
 
 
 def get_evaluator_fn(alpha, beta, gamma, delta):
@@ -41,10 +42,10 @@ class Solution():
         L, 
         num_employees, 
         num_tasks, 
-        alpha=10, 
+        alpha=30, 
         beta=1, 
-        gamma=100,
-        delta=10,
+        gamma=3000,
+        delta=20,
     ):
         cls.T = T
         cls.Z = Z
@@ -53,10 +54,10 @@ class Solution():
         cls.num_employees = num_employees
         cls.num_tasks = num_tasks
 
-        cls.alpha = 10
-        cls.beta = 1
-        cls.gamma = 100
-        cls.delta = 10
+        cls.alpha = alpha
+        cls.beta = beta
+        cls.gamma = gamma
+        cls.delta = delta
 
         cls.loss_function = get_evaluator_fn(alpha, beta, gamma, delta)
 
@@ -108,7 +109,7 @@ def import_function_by_fqn(fqn):
     module, name = fqn.split(".")
     return getattr(importlib.import_module(module), name)
 
-def evolutionary_algorithm(population, **kwargs):
+def evolutionary_algorithm(population, logger=None, **kwargs):
     breed_function = import_function_by_fqn(kwargs["breed_function"])
     mutate_function = import_function_by_fqn(kwargs["mutate_function"])
     select_function = import_function_by_fqn(kwargs["select_function"])
@@ -123,5 +124,8 @@ def evolutionary_algorithm(population, **kwargs):
         best_solution = best_solution if best_solution.f < best_child.f else best_child
 
         population = select_function(population, children)
+
+        if logger:
+            logger.log_iteration(best_solution, best_solution.get_detailed_f(), time.time())
 
     return best_solution

@@ -10,7 +10,7 @@ from maciek_function_file import defined_functions_maciek as maciek_functions
 from genetic_algorithm import Solution, evolutionary_algorithm, functions_to_names
 from itertools import product
 from taskplanner import generate_tasks, generate_input_matrices, Employee, Task
-from main import solve
+from evaluate import solve
 from uuid import uuid1
 
 
