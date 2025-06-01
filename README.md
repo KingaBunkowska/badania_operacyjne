@@ -84,6 +84,7 @@ Each experiment requires a `config.json` file located in the experiment director
       - `priority`: integer from 0 to 10 indicating task importance
   - `"auto"` - requires `num_tasks` and `num_employees`. Mock data will be automatically generated based on these counts. 
 
-  If 
+  If the optional field `save_matrices` is included in the configuration, the files `T.json`, `Z.json`, `p.json`, and `starting_population.json` will be saved inside the log directory. These files can be used to replicate the experiment or to test other methods on the same data.
+
 
 ---
