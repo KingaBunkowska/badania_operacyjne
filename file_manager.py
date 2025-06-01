@@ -1,8 +1,9 @@
 import inspect
 import json
-import pickle
 from pathlib import Path
 import os
+import time
+from uuid import uuid1
 
 from dominance_hierarchy_functions import (
     defined_functions as dominance_hierarchy_functions,
@@ -14,7 +15,7 @@ from lukasz_function import defined_functions as lukasz_functions
 from maciek_function_file import defined_functions_maciek as maciek_functions
 from taskplanner import solve
 from taskplanner import Employee, Task, generate_input_matrices, generate_tasks
-import time
+
 
 
 def get_function_names_dict():
@@ -339,8 +340,12 @@ class Logger(FileManager):
         super().__init__(catalog)
         if experiment_results_catalog is None:
             self.experiment_results_catalog = self._get_next_catalog()
+        elif os.path.isdir(self.experiment_catalog / experiment_results_catalog):
+            self.experiment_results_catalog = self._get_next_catalog()
+            print(f"Catalog already exists. Using {self.experiment_results_catalog} instead.")
         else:
             self.experiment_results_catalog = experiment_results_catalog
+
 
         self.experiment_results_full_path = self.experiment_catalog / self.experiment_results_catalog
 
@@ -350,15 +355,8 @@ class Logger(FileManager):
 
         print(f"Logs available in directory: {self.experiment_results_full_path}")
 
-    def _get_next_catalog(self):
-        default_name = "experiment_data"
-
-        i = 0
-        while True:
-            full_path = self.experiment_catalog / f"{default_name}_{i}"
-            if not os.path.isdir(full_path):
-                return full_path
-            i += 1
+    def _get_next_catalog(self, name="experiment_data"):
+        return f"{name}_{uuid1()}"
 
     def init_time_of_start(self, time):
         self.time_of_start = time
@@ -370,9 +368,9 @@ class Logger(FileManager):
             flag = "a"
         )
         csv_headers = ["iteration", "time_from_start", "f1", "f2", "f3", "f4", "f"]
-        headers_str = ",".join(header for header in csv_headers)
+        headers_str = ",".join(csv_headers)
         csv_values = [self.iter_number, time-self.time_of_start] + list(fs)
-        values_str = ",".join(str(v) for v in csv_values)
+        values_str = ",".join(f"{v:.3f}" for v in csv_values)
         with open(self.experiment_results_full_path / "results.csv", "a") as results:
             if self.iter_number == 0:
                 results.write(headers_str+"\n")

@@ -25,6 +25,3 @@ if __name__ == "__main__":
         logger=file_manager, 
         **file_manager.get_evolutionary_algorithm_arguments()
     )
-
-
-

@@ -42,10 +42,10 @@ class Solution():
         L, 
         num_employees, 
         num_tasks, 
-        alpha=10, 
+        alpha=30, 
         beta=1, 
-        gamma=100,
-        delta=10,
+        gamma=3000,
+        delta=20,
     ):
         cls.T = T
         cls.Z = Z

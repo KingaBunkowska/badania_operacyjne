@@ -45,7 +45,7 @@ def run_evaluate():
         Employee([], 10, [0, 99], [x for x in range(10)]),
     ]
 
-    evaluation_fn = get_evaluator_fn(10, 1, 100, 10)
+    evaluation_fn = get_evaluator_fn(30, 1, 3000, 20)
 
     random_results = [[] for _ in range(5)]
     best_effort_results = [[] for _ in range(5)]
