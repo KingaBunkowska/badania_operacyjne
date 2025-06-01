@@ -23,5 +23,6 @@ if __name__ == "__main__":
     file_manager.init_time_of_start(time.time())
     best_solution = evolutionary_algorithm(
         logger=file_manager, 
-        **file_manager.get_evolutionary_algorithm_arguments()
+        show_progress=True,
+        **file_manager.get_evolutionary_algorithm_arguments(),
     )

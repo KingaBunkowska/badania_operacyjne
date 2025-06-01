@@ -14,7 +14,7 @@ from genetic_algorithm import Solution
 from lukasz_function import defined_functions as lukasz_functions
 from maciek_function_file import defined_functions_maciek as maciek_functions
 from taskplanner import solve
-from taskplanner import Employee, Task, generate_input_matrices, generate_tasks
+from taskplanner import Employee, Task, generate_input_matrices, generate_tasks, generate_employees
 
 
 
@@ -104,7 +104,7 @@ class FileManager():
             "gamma", 
             "delta",
             "L",
-            "data_load_mode" # "matrices", "generated"
+            "data_load_mode" # "matrices", "generated", "auto"
         ]
 
         self.data = data
@@ -205,11 +205,30 @@ class FileManager():
                 )
 
     def _validate_data_load_mode(self, data):
-        if data["data_load_mode"] not in ("matrices", "generated"):
+        if data["data_load_mode"] not in ("matrices", "generated", "auto"):
             raise ValueError(
                 "Unexpected value of 'data_load_mode':"
-                f"{data["data_load_mode"]}. Expected: 'matrices' or 'generated'"
+                f"{data["data_load_mode"]}. Expected: 'matrices', 'generated' or 'auto'"
                 )
+        
+        if data["data_load_mode"] == "auto" and (
+            "num_employees" not in data.keys() 
+            or not isinstance(data["num_employees"], int) 
+            or data["num_employees"] <= 0
+        ):
+            raise ValueError(
+                f"In 'auto' mode, you must provide a 'num_employees' field with a positive integer value."
+            )
+
+        if data["data_load_mode"] == "auto" and (
+            "num_tasks" not in data.keys() 
+            or not isinstance(data["num_tasks"], int) 
+            or data["num_tasks"] <= 0
+        ):
+            raise ValueError(
+                f"In 'auto' mode, you must provide a 'num_tasks' field with a positive integer value."
+            )
+
 
     def _validate_required_fields(self, filename, data, required_fields):
         for required_field in required_fields:
@@ -237,6 +256,8 @@ class FileManager():
     def load_data(self):
         if self.data["data_load_mode"] == "generated":
             self._load_tasks_employees()
+        elif self.data["data_load_mode"] == "auto":
+            self._generate_data(self.data["num_tasks"], self.data["num_employees"])
         else: # "data_load_mode" = "matrices"
             self._load_T_Z_p()
 
@@ -250,6 +271,12 @@ class FileManager():
         self.T = self.load_matrix_from_json("T.json")
         self.Z = self.load_matrix_from_json("Z.json")
         self.p = self.load_matrix_from_json("p.json")
+
+    def _generate_data(self, num_tasks, num_employees):
+        tasks = generate_tasks(num_tasks)
+        employees = generate_employees(num_employees)
+
+        self.T, self.Z, self.p = generate_input_matrices(employees, tasks)
 
     def _validate_task(self, task_dict):
         if not (0 <= int(task_dict["priority"]) <= 10):
@@ -376,21 +403,3 @@ class Logger(FileManager):
                 results.write(headers_str+"\n")
             results.write(values_str+"\n")
         self.iter_number += 1
-
-if __name__ == "__main__":
-
-    # test
-    from genetic_algorithm import evolutionary_algorithm
-
-    manager = FileManager()
-    manager.load_config()
-
-    # manager.save_matrix_to_json("T.json", manager.T)
-    # manager.save_matrix_to_json("Z.json", manager.Z)
-    # manager.save_matrix_to_json("p.json", manager.p)
-    # print(evolutionary_algorithm(**manager.get_evolutionary_algorithm_arguments()).R)
-    # # print(manager.T)
-    # print(manager.starting_population[7].R)
-    # manager.save_solutions_to_json("starting_population.json", manager.starting_population)
-
-    manager.save_tasks_to_json(generate_tasks(100))
