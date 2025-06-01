@@ -1,7 +1,7 @@
 {
   "no_generations": 30,
-  "starting_population_mode": "auto",
-  "starting_population_size": 100,
+  "starting_population_mode": "from_file",
+  "starting_population_file": "starting_population.json",
   "breed_function": "dominant_solution_breed_happy_vs_productive",
   "mutate_function": "delete_lowest_priority",
   "select_function": "dominant_solution_select",
@@ -10,7 +10,5 @@
   "gamma": 3000,
   "delta": 20,
   "L": 80,
-  "data_load_mode": "auto",
-  "num_employees": 20,
-  "num_tasks": 80
+  "data_load_mode": "matrices"
 }
